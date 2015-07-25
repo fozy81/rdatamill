@@ -2,10 +2,13 @@
 
 testCustomerSurvey <- function(){
 
-      return(list(selectInput(inputId= "satisfaction",
+      return(list(
+        div(
+          id = "form",
+        selectInput(inputId= "satisfaction",
                             "Is this R package useful?",
                             c("yes","no","maybe")),
-                  selectInput(inputId= "where",
+                  selectInput("Where_you_hear",
                               "Where did you first hear about this package?",
                               c("R-blogs","Twitter","Web search")),
                   selectInput(inputId= "fixing",
@@ -13,7 +16,7 @@ testCustomerSurvey <- function(){
                               c("yes","no","maybe"),selected = "yes"),
                    selectInput(inputId= "fix",
                                  "Can you fix the issue with the 'save' actionButton - so that it disappears when survey compeleted?",
-                                c("yes","no","maybe"))
+                                c("yes","no","maybe")))
       ))
                   }
 

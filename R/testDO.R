@@ -4,11 +4,15 @@
 
 
 testDO <- function() {
-  return(list(sliderInput(inputId= "obs",
+
+
+  return(list(
+    div(
+      id = "form",sliderInput(inputId= "obs",
                           "DO - Dissolved Oxygen",
                           min = 0,
                           max = 1000,
-                          value = 0)
+                          value = 0))
             ))
-
+  shinyjs::reset("form")
 }

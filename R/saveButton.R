@@ -1,8 +1,9 @@
 saveButton <- function() {
 
-if(saveCount == 1){
-  return(actionButton("saveClick","Save Result"))
-}
+
+  return(div(
+      id = "saveButton",actionButton("saveClick","Save Result")))
+
 
 
   }

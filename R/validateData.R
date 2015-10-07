@@ -15,7 +15,7 @@ if(input$validate == 1){
 
     dataV <- read.csv(file='dataResults.csv')
     dataV$Mode <- as.character(dataV$Mode)
-    dataV$Mode[dataV$Mode == 'B' & dataV$Test == input$Test] <- 'C'
+    dataV$Mode[dataV$Mode == 'B' & dataV$Test == input$Data_test] <- 'C'
     dataV <<-  dataV
     return(write.csv(dataV, "dataResults.csv", row.names = FALSE))
 

@@ -1,51 +1,43 @@
 # creates dataframe of answers
 
-# currently excludes saveClick input - this is used to count number of times data has been entered. probably can remove in future
-# as old feature borrowed from oline article in first attempt at creating forms
-
-
 answersDataFrame <- function() {
 
 allInputValues <- names(input)
 
 analysis <- input$Analysis
-
-questions <- allInputValues[!allInputValues %in% c(analysis)]
-
+testForm <- read.csv(file="testForm.csv")
+testForm <- testForm[testForm$Test == analysis,]
+test_max <- max(testForm$Version)
+testForm <- testForm[testForm$Version == test_max,]
+# get only input values/questions that in relevant test selected:
+questions <- allInputValues[allInputValues %in% testForm$Question_order]
 
 answers <- lapply(questions,function(question){
-  answer <- eval(parse(text=paste("input$",question,sep="")))
-  return(answer)
+  answer <- data.frame(eval(parse(text=paste("input$",question,sep=""))))
+  result_name <- testForm$Question[testForm$Question_order %in% question]
+  answer$question <- result_name
+      return(answer)
 })
 
 answers <- data.frame(do.call("rbind", answers))
+names(answers) <- c('Result','Question')
 
-answers$'Test' <- answers[1,1]
-
-
-answers <- answers[-1,]
-
-names(answers) <- c("Answer","Test")
-
-questions <- data.frame(questions)
-
-names(questions) <- "Questions"
-
-questions <- questions[-1,]
-
-answers <- cbind(answers,questions)
-
-# remove saveClick input - probably remove this in future - left it in for now
-
-answers <- answers[!answers$questions == 'saveClick',]
-answers <- answers[!answers$questions == 'submit_another',]
-answers <- answers[!answers$questions == 'testClick',]
-answers <- answers[!answers$questions == 'submit_another_test',]
-#answers <- answers[!answers$questions == 'Test_name',]
 
 answers$'Mode' <- 'B'
-#answers  <<-  answers
-
+# this is saving the user - could use session info in future:
+answers$'Entered_by' <- "Default"
+answers$Date_entered <- as.factor(Sys.time())
+answers$Test <- unique(testForm$Test)
+answers$Version <- max(testForm$Version)
+# not working - want to increase 'counter' each time dataentry is saved
+counter <- counter_test()
+answers$Test_number <- counter
+ counter <- counter + 1
+ save(counter, file="counter.Rdata")
+ counter <- counter_sample()
+ answers$Sample_number <- counter
+ counter <- counter
+ save(counter, file="sampleCounter.Rdata")
 
 return(answers)
 

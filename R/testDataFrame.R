@@ -1,65 +1,118 @@
-# creates dataframe of answers
-
-# currently excludes saveClick input - this is used to count number of times data has been entered. probably can remove in future
-# as old feature borrowed from oline article in first attempt at creating forms
-
+# creates dataframe of answers.
 
 testDataFrame <- function() {
 
 all_input_values <- names(input)
-all_input_values <<- all_input_values
+
 # input values from shiny GUI include active button, text boxes etc from all the
-# html widgets (in all panels/tabs with in app). We only want to keep inputs
-# from the form:
+# html widgets (in all panels/tabs within app). We only want to keep inputs
+# from the form itself:
 
 questions <- grep(pattern ='_test',all_input_values, value=T)
+
 
 answers <- lapply(questions,function(question){
   answer <- eval(parse(text=paste("input$",question,sep="")))
   return(answer)
 })
-answers <<- answers
+
 answers <- data.frame(do.call("rbind", answers))
 
-questions <- data.frame(questions)
 
+# get answers about list - this becomes a separate column in the dataframe
+lists <- grep(pattern ='List',all_input_values, value=T)
+
+lists <- lapply(lists,function(list){
+  list <- eval(parse(text=paste("input$",list,sep="")))
+  return(list)
+})
+
+lists <- data.frame(do.call("rbind", lists))
+names(lists) <- "lists"
+
+
+# get answers about types of list input arguments - - this becomes a separate column in the dataframe
+types <- grep(pattern ='_type',all_input_values, value=T)
+
+types <- lapply(types,function(type){
+  answer <- eval(parse(text=paste("input$",type,sep="")))
+  return(answer)
+})
+
+
+types <- data.frame(do.call("rbind", types))
+names(types) <- "types"
+
+# get answers about numeric input arguments
+
+maxis <- grep(pattern ='max',all_input_values, value=T)
+
+maxis <- lapply(maxis,function(maxi){
+ maxi <- eval(parse(text=paste("input$",maxi,sep="")))
+  return(maxi)
+})
+
+maxis <- data.frame(do.call("rbind", maxis))
+names(maxis) <- c("max")
+
+minis <- grep(pattern ='min',all_input_values, value=T)
+
+minis <- lapply(minis,function(mini){
+ mini <- eval(parse(text=paste("input$",mini,sep="")))
+  return(mini)
+})
+
+minis <- data.frame(do.call("rbind", minis))
+names(minis) <- c("min")
+
+steps <- grep(pattern ='step',all_input_values, value=T)
+
+steps <- lapply(steps,function(step){
+  step <- eval(parse(text=paste("input$",step,sep="")))
+  return(step)
+})
+
+steps <- data.frame(do.call("rbind", steps))
+names(steps) <- c("step")
+
+
+questions <- data.frame(questions)
 names(questions) <- "Questions"
 
 answers <- data.frame(cbind(answers,questions))
-
 names(answers) <- c("Answer","questions")
-answers$'Test' <- answers$Answer[answers$questions == 'name_test']
 
-# get rid of blank questions i.e. where no question added to form
+answers$'Test' <- as.character(unique(answers$Answer[answers$questions == 'name_test']))
+
+#remove test name as question
+answers <- answers[!answers$questions == 'name_test',]
+
+# save the checkbox for if test is active for data entry or not:
+
+answers$'Active' <- as.character(answers$Answer[answers$questions == 'check_box_test'])
+answers <- answers[!answers$questions == 'check_box_test',]
+
+answers <- data.frame(cbind(answers,types))
+answers <- data.frame(cbind(answers,lists))
+answers <- data.frame(cbind(answers,maxis))
+answers <- data.frame(cbind(answers,minis))
+answers <- data.frame(cbind(answers,steps))
 answers <- answers[!answers$Answer == "",]
 
-# add version number to test
+# crete some extra column of useful info - may add more or develop further in future
+answers$'Date_created' <- Sys.time()
+answers$'Required' <- ""
+answers$'constraint_message' <- ""
+answers$Hint <- ""
+#answers$questions <- NULL
 
-     #  return(paste0("Version: ", testcounter))
-     if (file.exists("testcounter.Rdata")){ load(file="testcounter.Rdata")
-  answers$Test <- as.character(answers$Test)
-  if (unique(unique(answers$Answer) %in% testcounter$name_test)){
-    name_test <- as.character(unique(answers$Answer[answers$questions == 'name_test']))
-     version <- unique(testcounter$Version[testcounter$name_test == name_test])
-     testcounter$Version  <- version + 1
-     save(testcounter, file="testcounter.Rdata")}
-     if  (!unique(answers$Test) %in% testcounter){
-       testcounter_update <- data.frame(c(1))
-       testcounter_update$name_test <- as.character(unique(answers$Answer[answers$questions == 'name_test']))
-       names(testcounter_update) <- c('Version','name_test')
-       testcounter <- rbind(testcounter,testcounter_update)
-     save(testcounter, file="testcounter.Rdata")
-    }}
+names(answers) <- c('Question','Question_order','Test', 'Active','types','lists','max','min','step','Date_created','Required','constraint_message','Hint')
+#answers$'Active' <- answers$Answer[answers$questions == 'check_box_test']
 
-     if (!file.exists("testcounter.Rdata")){
-       answers$Test <- as.character(answers$Test)
-       testcounter <- data.frame(c(1))
-       testcounter$name_test <- as.character(unique(answers$Answer[answers$questions == 'name_test']))
-       names(testcounter) <- c('Version','name_test')
-       save(testcounter,file="testcounter.Rdata")}
-       save(testcounter, file="testcounter.Rdata")
-      # return(paste0("Version: ", testcounter))
 
+# get rid of blank questions i.e. where no question added to form
+#answers <- answers[!answers$Answer == "",]
+#answers <<- answers
 return(answers)
 
 }

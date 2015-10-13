@@ -26,7 +26,7 @@ saveTest <- function(){
          version <- max(savedTestForms$Version[savedTestForms$Test == name_test])
          test_questions$Version  <- version + 1
          test_questions$Date_created  <- as.character(test_questions$Date_created)
-         savedTestForms <- rbind(savedTestForms, test_questions)
+                 savedTestForms <- rbind(savedTestForms, test_questions)
 
          return(write.csv(savedTestForms, "testForm.csv", row.names = FALSE))
 

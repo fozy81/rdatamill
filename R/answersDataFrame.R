@@ -1,28 +1,34 @@
 # creates dataframe of answers
 
-answersDataFrame <- function() {
+answersDataFrame <- function(){
 
-allInputValues <- names(input)
+allInputValues <<- names(input)
 
 analysis <- input$Analysis
+
+analysisINputs <<- input$Analysis
+answers <- lapply(analysis,function(analysis){
+
 testForm <- read.csv(file="testForm.csv")
 testForm <- testForm[testForm$Test == analysis,]
 test_max <- max(testForm$Version)
-testForm <- testForm[testForm$Version == test_max,]
+testForm <<- testForm[testForm$Version == test_max,]
 # get only input values/questions that in relevant test selected:
-questions <- allInputValues[allInputValues %in% testForm$Question_order]
-
+questions <- allInputValues[allInputValues %in% testForm$Question_order_name]
 answers <- lapply(questions,function(question){
-  answer <- data.frame(eval(parse(text=paste("input$",question,sep=""))))
-  result_name <- testForm$Question[testForm$Question_order %in% question]
+
+
+  result_name <<- as.character(testForm$Question[testForm$Question_order_name %in% question])
+  answer <<- data.frame(eval(parse(text=paste("input$",question,sep=""))))
   answer$question <- result_name
+
       return(answer)
 })
-
 answers <- data.frame(do.call("rbind", answers))
+
 names(answers) <- c('Result','Question')
 
-
+answers1  <<- answers #testing
 answers$'Mode' <- 'B'
 # this is saving the user - could use session info in future:
 answers$'Entered_by' <- "Default"
@@ -39,6 +45,9 @@ answers$Test_number <- counter
  counter <- counter
  save(counter, file="sampleCounter.Rdata")
 
+ return(answers)
+})
+answers <- data.frame(do.call("rbind",answers))
 return(answers)
 
 }

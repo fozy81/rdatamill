@@ -69,8 +69,8 @@ return(list(
     h3('Advanced options'),
     checkboxInput("check_box_test", label = h4(" Test active for data entry?"), value = TRUE),
     checkboxInput("check_validation_function", label = h4(" Create boiler-plate validation function to add more complex validation rules to?"), value = FALSE),
-  hr())))
-
+    checkboxInput("multiple_results_test", label = h4("Allow multiple results to be entered per sample"), value = FALSE),
+hr())))
 
 }
 

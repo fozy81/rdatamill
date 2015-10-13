@@ -78,7 +78,6 @@ names(steps) <- c("step")
 
 questions <- data.frame(questions)
 names(questions) <- "Questions"
-
 answers <- data.frame(cbind(answers,questions))
 names(answers) <- c("Answer","questions")
 
@@ -92,6 +91,10 @@ answers <- answers[!answers$questions == 'name_test',]
 answers$'Active' <- as.character(answers$Answer[answers$questions == 'check_box_test'])
 answers <- answers[!answers$questions == 'check_box_test',]
 
+
+answers$'multiple_results' <- as.character(answers$Answer[answers$questions == 'multiple_results_test'])
+answers <- answers[!answers$questions == 'multiple_results_test',]
+
 answers <- data.frame(cbind(answers,types))
 answers <- data.frame(cbind(answers,lists))
 answers <- data.frame(cbind(answers,maxis))
@@ -104,9 +107,11 @@ answers$'Date_created' <- Sys.time()
 answers$'Required' <- ""
 answers$'constraint_message' <- ""
 answers$Hint <- ""
+# test if can add name to Question_test_1 et so that multiple results for the same question can be returned in the same sample
+answers$Question_order_name <- paste(answers$questions,answers$Answer,sep="")
 #answers$questions <- NULL
 
-names(answers) <- c('Question','Question_order','Test', 'Active','types','lists','max','min','step','Date_created','Required','constraint_message','Hint')
+names(answers) <- c('Question','Question_order','Test', 'Active','multiple_results','types','lists','max','min','step','Date_created','Required','constraint_message','Hint','Question_order_name')
 #answers$'Active' <- answers$Answer[answers$questions == 'check_box_test']
 
 

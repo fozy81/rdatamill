@@ -1,3 +1,6 @@
-"Question","Question_order","Test","Active","multiple_results","types","lists","max","min","step","Date_created","Required","constraint_message","Hint","Question_order_name","Version"
-"name","Question_test_1","Sampler","TRUE","FALSE","text box",NA,0,0,0,"2015-10-13 19:58:05",NA,NA,NA,"Question_test_1name",1
-"Type","Question_test_1","Tree","TRUE","TRUE","list","green,red,yellow",0,0,0,"1444762713.53302","","","","Question_test_1Type",1
+"Question","Question_order","Test","Active","multiple_results","types","lists","max","min","step","unit","required","Date_created","constraint_message","Hint","Question_order_name","Version"
+"awa","Question_test_1","waww","TRUE","FALSE","text box",NA,0,0,0,"none",FALSE,"2015-10-15 23:03:50",NA,NA,"Question_test_1awa",1
+"hot","Question_test_1","drink","TRUE","FALSE","numeric",NA,10,1,1,"kg",TRUE,"1444946785.14109",NA,NA,"Question_test_1hot",1
+"TEWS","Question_test_2","drink","TRUE","FALSE","text box",NA,0,0,0,"none",TRUE,"1444946785.14109",NA,NA,"Question_test_2TEWS",1
+"tre","Question_test_1","tre","TRUE","TRUE","text box","",0,0,0,"none",TRUE,"1445044253.64491","","","Question_test_1tre",1
+"ref","Question_test_2","tre","TRUE","TRUE","text box","",0,0,0,"none",FALSE,"1445044253.64491","","","Question_test_2ref",1

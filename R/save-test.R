@@ -1,12 +1,10 @@
-saveTest <- function(){
+#save test
 
+save_test <- function(){
 
-  if(is.null(input$testClick))
-    return()
-  if(input$testClick >= 1){
     if (!file.exists("testForm.csv")){
       # save the version number of the test if testForm doesn't exists:
-      test_questions <- testDF()
+      test_questions <- test_input()
       test_questions$Version <- 1
 
        try(return(write.csv( test_questions, "testForm.csv",row.names = FALSE)))
@@ -15,7 +13,7 @@ saveTest <- function(){
     # save the version number of the test if testForm already exists:
 
     if(file.exists("testForm.csv")){
-     test_questions <- testDF()
+     test_questions <- test_input()
    #  test_questions   <-   test_questions
      savedTestForms <- read.csv("testForm.csv", stringsAsFactors=F)
      test_questions$Test <- as.character(test_questions$Test)
@@ -40,5 +38,5 @@ saveTest <- function(){
       return(write.csv(savedTestForms, "testForm.csv", row.names = FALSE))}
 }
 }
-   }
+
 

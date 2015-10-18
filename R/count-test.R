@@ -1,7 +1,7 @@
 
 # save test number to .Rdata file
 
-testCounter <- function(){
+count_test <- function(){
 
   if (!file.exists("counter.Rdata")){
     counter <- 1

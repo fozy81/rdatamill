@@ -1,12 +1,11 @@
-# creates dataframe of answers
+# creates dataframe of results entered
 
-answersDataFrame <- function(){
+result_input <- function(){
 
-allInputValues <<- names(input)
 
 analysis <- input$Analysis
 
-analysisINputs <<- input$Analysis
+#analysisINputs <<- input$Analysis
 answers <- lapply(analysis,function(analysis){
 
 testForm <- read.csv(file="testForm.csv")

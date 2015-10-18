@@ -1,9 +1,9 @@
 
 # for displaying test in UI for data entry
 
-openTest <- function(){
+open_test <- function(){
 
-inputTest <- input$Analysis
+inputTest <- input$selected_test_2
 
 
 open_Test <- lapply(inputTest, function(test){
@@ -52,10 +52,19 @@ submit_another <- input$submit_another
 ifelse(input$submit_another > 0, first_result_entry <- FALSE,first_result_entry <- TRUE)
 if(input$submit_another > 0){
   if( first_result_entry == testForm$multiple_results){
-    return()
-  }
-}
+           return()
+        }
 
+  }
+
+
+
+labelMandatory <- function(label) {
+  tagList(
+    label,
+    span("*", class = "mandatory_star")
+  )
+}
 
  return(list(
 # if(order == "Question_test_1"){ paste("div(id = \"form\",")},

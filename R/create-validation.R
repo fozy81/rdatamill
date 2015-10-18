@@ -1,11 +1,11 @@
 
 
-createValidation <- function(){
+create_validation <- function(){
   # create bioler plate validation rule function - perhaps make this optional in future - only use if custom validation rules required
 
 
 # get some variables required to create validation rules
-  test_questions <- testDF()
+  test_questions <- test_input()
   name_test <- unique(as.character(test_questions$Test))
   name_test_under_score <- gsub(" ","_",name_test)  # add unscore if spaces in test name
   testForms <- try(read.csv("testForm.csv", stringsAsFactors=F))

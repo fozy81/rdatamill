@@ -1,10 +1,10 @@
 
 # for updating test
 
-updateTest <- function(){
+update_test <- function(){
 
 testForm <- read.csv(file="testForm.csv")
-inputTest <- input$select_Test
+inputTest <- input$selected_test_1
 testForm <- testForm[testForm$Test == inputTest,]
 test_max <- max(testForm$Version)
 testForm <- testForm[testForm$Version == test_max,]
@@ -73,7 +73,9 @@ if(order2 == 'Question_type_2'){
     numericInput("max_3", label = ('Max numeric values'), value=max_test_1 ),numericInput("min_3", label = ('Min numeric values'),value=min_test_1 ),numericInput("step_3", label = ('Step'),value=step_test_1))},
 h5(paste("Version:",test_max,"",sep=""))
 ))
-  }
-)}}
+  })
+
+return(output)}
+}
 
 

@@ -1,4 +1,4 @@
-uploadData <- function(){
+upload_data <- function(){
 
   return(list(
 

@@ -2,7 +2,9 @@ library(shiny)
 library(shinyjs)
 library(rdatamill)
 
-# Create function with renderUI and save to R directory. The file name for the
+#
+# Code not used currently:
+#Create function with renderUI and save to R directory. The file name for the
 # survey must start with 'test..' e.g. testCustomerSurvey.R There are  a few
 # examples in the R directory. Currently limited to single paper surveys
 # automatically search for all available tests
@@ -12,42 +14,27 @@ library(rdatamill)
  getTestFunctions <- grep(pattern ='^test',getFunctionNames, value=T)
  getTestFunctions <<- getTestFunctions[getTestFunctions != 'testDataFrame']
 
-# getPrettyNames <-  sub("test", "", getTestFunctions)
-# getChoices <<- setNames(getTestFunctions,getPrettyNames)
+###################################################
 
-# fetch functions names saved in test table for updating:
-# if(file.exists("testForm.csv")){
-# getTestForms <- read.csv(file="testForm.csv")
-# getTestForms$Test <- as.character(getTestForms$Test)
-# getChoices2 <- unique(getTestForms$Test)
-# getChoices2 <<- setNames(getChoices2,getChoices2)
-# getTestFunctions <<- getChoices2
-# getChoices3 <<- getChoices2
-# }
-# if(!file.exists("testForm.csv")){
-# getChoices2 <<- setNames("","")
-# getTestFunctions <<- getChoices2
-# # combine all tests (in table and write into functions) so all tests can be selected:
-# getChoices3 <<- getChoices2
-# }
+ appCSS <-".mandatory_star { color: red; }"
 shinyUI(navbarPage(
     title = 'R DataMill',(tabPanel('Create/Edit Test',
 
                                   shinyjs::useShinyjs(),
                                   # Select update or create new test
                                   fluidRow(column(3,
+                                                  p(),
+                                                  actionButton("create_new_test","Create New Test"),
+                                                  h5('Or...'),
+                                                  uiOutput('test_choices_1'),
+                                                  actionButton("edit_test","Load Test")
 
 
-                                                  uiOutput('test_list_one'),
-                                                  actionButton("edit_Test","Edit Test"),
-                                                  hr(),
-                                                  h4('Or...'),
-                                                  actionButton("create_new_Test","Create New Test")
 
                                   ),
                                   fluidRow(column(6
-                                                  , uiOutput('testCreateUI'),
-                                                  uiOutput('test_updateUI')
+                                                  , uiOutput('test_create'),
+                                                  uiOutput('test_update')
 
 
 
@@ -75,20 +62,25 @@ shinyUI(navbarPage(
                fluidRow(column(3,
 
 
-                               uiOutput('test_list_two'),
-                               actionButton("add_Test","Add Test")
+                               uiOutput('test_choices_2'),
+                               actionButton("log_sample","Log Sample")
 
       ),
       fluidRow(column(6,
+                      shinyjs::inlineCSS(appCSS),
 
-
-        uiOutput('analysisUI'),
+        uiOutput('data_entry'),
         shinyjs::hidden(
           div(
             id = "thankyou_msg",
             h3("Thanks, your response was submitted successfully!"),
             actionLink("submit_another", "Submit another response"),p(),
             actionLink("submit_finish", "Data entry complete - finish sample")
+          )),
+        shinyjs::hidden(
+          div(
+            id = "mandatory",
+            h3("Complete mandatory fields")
           )),
         shinyjs::hidden(
           div(
@@ -103,8 +95,8 @@ shinyUI(navbarPage(
     )),
 tabPanel('Data upload',  fluidRow(column(3,
 
-         uiOutput('test_list_three')),    fluidRow(column(6,
-                                                          uiOutput('uploadDataUI')
+         uiOutput('test_choices_3')),    fluidRow(column(6,
+                                                          uiOutput('upload_data')
 
                                                           ))
 
@@ -112,7 +104,7 @@ tabPanel('Data upload',  fluidRow(column(3,
    tabPanel('Validation',shinyjs::useShinyjs(),
                                 fluidRow(column(3,
 
-                                                uiOutput('test_list_four')),
+                                                uiOutput('test_choices_4')),
                 fluidRow(column(6,
 
                                 dataTableOutput('result_table'),  actionButton("validate","Validate"),  dataTableOutput('validate_table')

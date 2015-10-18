@@ -1,7 +1,7 @@
 
 # save sample number to .Rdata file
 
-sampleCounter <- function(){
+count_sample <- function(){
 
   if (!file.exists("sampleCounter.Rdata")){
     counter <- 1

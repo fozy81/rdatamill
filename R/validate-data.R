@@ -1,11 +1,11 @@
 
 # not sure why this works! - without the first two if statements...
 
-validateData <- function(){
+validate_data <- function(){
 
-if(is.null(input$validate))
+if(is.null(input$selected_test_4))
   return()
-if(input$validate == 1){
+if(input$selected_test_4 == 1){
 
   if (!file.exists("dataResults.csv")){
 

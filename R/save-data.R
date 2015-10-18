@@ -1,21 +1,16 @@
+# saves user entered results
 
-# not sure why this works! - without the first two if statements...
-
-saveData <- function(){
-
-if(is.null(input$saveClick))
-  return()
-if(input$saveClick >= 1){
+save_data <- function(){
 
   if (!file.exists("dataResults.csv")){
-    dataResults <- answersDF()
+    dataResults <- answers_df()
     dataResults$Result_Number <- row.names(dataResults)
     try(return(write.csv(dataResults, "dataResults.csv",row.names = FALSE)))
   }
   if(file.exists("dataResults.csv")){
 
     dataResults <- read.csv("dataResults.csv",stringsAsFactors = FALSE)
-    newResults <- answersDF()
+    newResults <- answers_df()
     newResults$Result_Number <- row.names(newResults)
     dataResults <- rbind(dataResults,newResults)
     dataResults$Result_Number <- row.names(dataResults)
@@ -24,6 +19,6 @@ if(input$saveClick >= 1){
 
   }
 }
-  }
+#}
 
 

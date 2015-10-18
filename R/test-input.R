@@ -1,6 +1,6 @@
-# creates dataframe of answers.
+# creates dataframe of test editing input
 
-testDataFrame <- function() {
+test_input <- function() {
 
 all_input_values <- names(input)
 
@@ -75,6 +75,28 @@ steps <- lapply(steps,function(step){
 steps <- data.frame(do.call("rbind", steps))
 names(steps) <- c("step")
 
+# get answers about units input arguments - - this becomes a separate column in the dataframe
+unit_types <- grep(pattern = '_unit',all_input_values, value=T)
+
+unit_types <- lapply(unit_types,function(unit_type){
+  unit_type <- eval(parse(text=paste("input$",unit_type,sep="")))
+   return(unit_type)
+})
+
+unit_types <- data.frame(do.call("rbind", unit_types))
+names(unit_types) <- "unit"
+
+# get answers about mandatory input arguments - - this becomes a separate column in the dataframe
+required <- grep(pattern = 'mandatory_',all_input_values, value=T)
+
+required <- lapply(required,function(required1){
+  required1 <- eval(parse(text=paste("input$",required1,sep="")))
+  return(required1)
+})
+
+required <- data.frame(do.call("rbind", required))
+names(required) <- "Required"
+
 
 questions <- data.frame(questions)
 names(questions) <- "Questions"
@@ -100,18 +122,20 @@ answers <- data.frame(cbind(answers,lists))
 answers <- data.frame(cbind(answers,maxis))
 answers <- data.frame(cbind(answers,minis))
 answers <- data.frame(cbind(answers,steps))
+answers <- data.frame(cbind(answers,unit_types))
+answers <- data.frame(cbind(answers,required))
 answers <- answers[!answers$Answer == "",]
 
 # crete some extra column of useful info - may add more or develop further in future
 answers$'Date_created' <- Sys.time()
-answers$'Required' <- ""
+#answers$'Required' <- ""
 answers$'constraint_message' <- ""
 answers$Hint <- ""
 # test if can add name to Question_test_1 et so that multiple results for the same question can be returned in the same sample
 answers$Question_order_name <- paste(answers$questions,answers$Answer,sep="")
 #answers$questions <- NULL
 
-names(answers) <- c('Question','Question_order','Test', 'Active','multiple_results','types','lists','max','min','step','Date_created','Required','constraint_message','Hint','Question_order_name')
+names(answers) <- c('Question','Question_order','Test', 'Active','multiple_results','types','lists','max','min','step','unit','required','Date_created','constraint_message','Hint','Question_order_name')
 #answers$'Active' <- answers$Answer[answers$questions == 'check_box_test']
 
 

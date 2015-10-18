@@ -2,238 +2,182 @@ library(shiny)
 library(rdatamill)
 library(shinyjs)
 
-
-#load(file="counter.Rdata")
-
 shinyServer(function(input, output, session) {
+
+  # create UI selectInput to pick from list of available tests and
+  # updates when new test created if no test available leave blank:
+
+  output$test_choices_1 <- test_selector(input_name='selected_test_1',message='Select existing test to edit')
+  output$test_choices_2  <- test_selector(input_name='selected_test_2',message='Select tests to add to sample:',multiple=T)
+  output$test_choices_3  <- test_selector(input_name='selected_test_3',message='Select test to upload data')
+  output$test_choices_4  <- test_selector(input_name='selected_test_4',message='Select test data to validate')
+
+  # output the 'create a new test' panel in the UI if 'edit test' button selected
+  observeEvent(input$edit_test, {
+    output$test_create  <- renderUI({
+      return(list(update_test(), update_button()))
+    })
+  })
+
+  # output the 'update test' panel in the UI if 'update test' button selected
+  observeEvent(input$create_new_test, {
+    output$test_create  <- renderUI({
+      return(list(create_test(), update_button()))
+      })
+  })
+
+  # reactive global test list so if test added this will be added to drop  down list:
+  test_df <<- reactive({
+    get_test()
+  })
+
+  # creates a dataframe reactively of the fields in the test being edited. make
+  # these functions global so that save_test can find the dataframe to save to
+  # file:
+#   test_data  <<- reactive({
+#     test_input()
+#   })
+
+  # if new test saved or existing test updated/edited then save new verison of test to file and create validation function
+  observeEvent(input$update_click, {
+    save_test()
+    create_validation()
+    shinyjs::hide("form")
+    shinyjs::hide("save_test")
+    shinyjs::show("another_test_msg")
+  })
+
+  observeEvent(input$submit_another_Test, {
+
+    shinyjs::reset("form")
+    shinyjs::show("form")
+    shinyjs::show("save_test")
+    shinyjs::hide("another_test_msg")
+
+  })
+
+  # output the surveys/tests in the UI for data entry
+  output$data_entry <- renderUI({
+    # if 'Log sample' button not clicked don't allow sample to be saved
+      if (input$log_sample < 1)
+      return(list(open_test()))
+    # if sample logged allow results to be saved:
+    if (input$log_sample > 0)
+      return(list(open_test(), save_button()))
+  })
+
+  # immediately following logging save empty sample
+  observeEvent(input$log_sample, {
+    if (input$log_sample == 1)
+      try(save_data())
+  })
+
+
+  # labelMandatory <- function(label) { tagList( label, span('*', class =
+  # 'mandatory_star') ) }
+
+  observeEvent(input$save_click, {
+    test_df_forms <- get_test()
+    fieldsMandatory <- test_df_forms$Question_order_name[test_df_forms$required == T & test_df_forms$Test %in% input$Analysis]
+    mandatoryFilled <- vapply(fieldsMandatory, function(x) {
+      !is.null(input[[x]]) && input[[x]] != ""
+    }
+    , logical(1))
+    mandatoryFilled <- all(mandatoryFilled)
+
+    if (mandatoryFilled == T | is.null(fieldsMandatory)) {
+      # enable/disable the submit button
+      if (is.null(input$save_click))
+        return()
+      if (input$save_click >= 1) {
+        save_data()
+        shinyjs::hide("form")
+        shinyjs::hide("save_button")
+        shinyjs::hide("mandatory")
+        shinyjs::show("thankyou_msg")
+      }
+    }
+    if (mandatoryFilled == F) {
+      shinyjs::show("mandatory")
+    }
+  })
+
+  observeEvent(input$submit_another, {
+
+    shinyjs::reset("form")
+    shinyjs::show("form")
+    shinyjs::show("save_button")
+    shinyjs::hide("thankyou_msg")
+
+  })
+
+  observeEvent(input$submit_finish, {
+    counter <- counter_sample()
+    counter <- counter + 1
+    save(counter, file = "sampleCounter.Rdata")
+    shinyjs::reset("form")
+    shinyjs::hide("form")
+    shinyjs::hide("thankyou_msg")
+  })
+
+  # Make the input$ values global so result_input() function can
+  # access the answers
+
+  input <<- input
+
+  # creates a dataframe reactively for saveData function to save to file make
+  # these functions global so that save_data can find the dataframe to save to
+  # file:
+  answers_df <<- reactive({
+    result_input()
+  })
 
   # create counter to add unique number to each record saved
   output$counter <- renderText({
-    counters <- counter_test()
-    return(paste0("Test count: ", counters))})
-
-### this next bit create UI selectInput to pick from list of available tests -
-### updates when new test created, after page refresh.
-### This repeats three times! - But can't re-use same element on different tabs. Needs fixing!!
-
-output$test_list_one <- renderUI({
-  if(file.exists("testForm.csv")){
-    getTestForms <- read.csv(file="testForm.csv")
-    getTestForms$Test <- as.character(getTestForms$Test)
-    getChoices2 <- unique(getTestForms$Test)
-    getChoices2 <- setNames(getChoices2,getChoices2)
-    getTestFunctions <- getChoices2
-    getChoices3 <<- getChoices2
-  }
-  if(!file.exists("testForm.csv")){
-    getChoices2 <- setNames("","")
-    getTestFunctions <- getChoices2
-    # combine all tests (in table and write into functions) so all tests can be selected:
-    getChoices3 <- getChoices2
-    getChoices3 <<-  getChoices2
-  }
- ui <- selectInput("select_Test","Select test to update",getChoices3)
-  return(ui)
-})
-
-output$test_list_two <- renderUI({
-  if(file.exists("testForm.csv")){
-    getTestForms <- read.csv(file="testForm.csv")
-    getTestForms$Test <- as.character(getTestForms$Test)
-    tests_name <<-    getTestForms$Test
-    getChoices2 <- unique(getTestForms$Test)
-    getChoices2 <- setNames(getChoices2,getChoices2)
-    getTestFunctions <- getChoices2
-    getChoices3 <<- getChoices2
-    }
-  if(!file.exists("testForm.csv")){
-    tests_name <<-  ""
-    getChoices2 <- setNames("","")
-    getTestFunctions <- getChoices2
-    getChoices3 <- getChoices2
-  getChoices3 <<-  getChoices2
-  }
-  ui <- selectInput("Analysis","Select test to enter data",multiple= T,getChoices3)
-  return(ui)
-})
-
-output$test_list_three <- renderUI({
-  if(file.exists("testForm.csv")){
-    getTestForms <- read.csv(file="testForm.csv")
-    getTestForms$Test <- as.character(getTestForms$Test)
-    tests_name <<-    getTestForms$Test
-    getChoices2 <- unique(getTestForms$Test)
-    getChoices2 <- setNames(getChoices2,getChoices2)
-    getTestFunctions <- getChoices2
-    getChoices3 <<- getChoices2
-  }
-  if(!file.exists("testForm.csv")){
-    tests_name <<-  ""
-    getChoices2 <- setNames("","")
-    getTestFunctions <- getChoices2
-    getChoices3 <- getChoices2
-    getChoices3 <<-  getChoices2
-  }
-  ui <- selectInput("Analysis","Select test to upload data",getChoices3)
-  return(ui)
-})
-
-output$test_list_four <- renderUI({
-  if(file.exists("testForm.csv")){
-    getTestForms <- read.csv(file="testForm.csv")
-    getTestForms$Test <- as.character(getTestForms$Test)
-    tests_name <<-    getTestForms$Test
-    getChoices2 <- unique(getTestForms$Test)
-    getChoices2 <- setNames(getChoices2,getChoices2)
-    getTestFunctions <- getChoices2
-    getChoices3 <<- getChoices2
-  }
-  if(!file.exists("testForm.csv")){
-    tests_name <<-  ""
-    getChoices2 <- setNames("","")
-    getTestFunctions <- getChoices2
-    getChoices3 <- getChoices2
-    getChoices3 <<-  getChoices2
-  }
-  ui <- selectInput("Data_test","Select test data to validate",getChoices3)
-  return(ui)
-})
-
-
-#       if (!file.exists("counter.Rdata"))
-#         counter <<- 1
-#       save(counter,file="counter.Rdata")
-#       paste0("Hits: ", counter)
-#       if (file.exists("counter.Rdata")) load(file="counter.Rdata")
-#       counter <<- counter + 1
-#
-#       save(counter, file="counter.Rdata")
-#       return(paste0("Sample count: ", counter))
-
-
-
-# output the survey/test in the UI for data entry
-  output$analysisUI <- renderUI({
-
-         return(list(openTest(),saveButton()))
-
+    counters <- count_test()
+    return(paste0("Test count: ", counters))
   })
 
-  # output the 'update test' in the UI
-  output$test_updateUI <- renderUI({
-    # if statement no quite right - sometimes needs two clicks:
-    if(input$edit_Test > input$create_new_Test ){
-      return(list(updateTest(),saveTestButton()))}
-    return()
+  # count number of samples saved and and increase by one each time data
+  # is saved.
+  counter_test <<- reactive({
+      count_test()
   })
 
-  # output the 'create a new' test in the UI
-  output$testCreateUI <- renderUI({
-    if(input$create_new_Test > input$edit_Test){
-      return(list(createTest(),saveTestButton()))}
-    return()
+  # count number of tests saved and and increase by one each time data is
+  # saved.
+  counter_sample <<- reactive({
+     count_sample()
   })
 
   # upload data
-  output$uploadDataUI <- renderUI({
-  return(uploadData())
+  output$upload_data <- renderUI({
+    upload_data()
   })
 
-# Make the input$ values global so answersDataFrame() function can access the answers
+  # Data validation table output:
+  output$result_table <- renderDataTable({
 
-input <<- input
+    data <- read.csv(file = "dataResults.csv")
+    unvalidated_data <- data[data$Mode == "B" & data$Test == input$selected_test_4,]
 
-#creates a dataframe reactively for saveData function to save to file
-answersDF <- reactive({
-  answersDataFrame()
-})
+    return(unvalidated_data)
+  })
 
-#creates a dataframe reactively for saveTest function to save to file
-testDF <- reactive({
-  testDataFrame()
-})
+  output$validate_table <- renderDataTable({
 
-#count number of samples saved and and increase by one each time data is saved.
-counter_test <<- reactive({
- counter_t <- testCounter()
- return(counter_t)
-})
+    dataMode <- read.csv(file = "dataResults.csv")
+    dataMode <- dataMode[dataMode$Mode == "B" & dataMode$Test == input$selected_test_4,
+                         ]
+    # needs updating so different rules used for different verions:
+    validation_name <<- paste("valid_", unique(dataMode$Test), "_",
+                              max(dataMode$Version), ".R", sep = "")
+    source(validation_name)
+    dataMode <- as.data.frame(validation_rule(dataMode))
+    return(dataMode)
+  })
 
-#count number of tests saved and and increase by one each time data is saved.
-counter_sample <<- reactive({
-  counter_s <- sampleCounter()
-  return(counter_s)
-})
-
-#make these functions global so that saveTest and saveData can find the dataframe to save to file:
-testDF <<- testDF
-answersDF  <<- answersDF
-
-# Data validation table output:
-output$result_table <- renderDataTable({
-
-  dataMode <- read.csv(file='dataResults.csv')
-  dataMode <- dataMode[dataMode$Mode == 'B' & dataMode$Test == input$Data_test,]
-  return(dataMode)})
-
-output$validate_table <- renderDataTable({
-
-  dataMode <- read.csv(file='dataResults.csv')
-  dataMode <- dataMode[dataMode$Mode == 'B' & dataMode$Test == input$Data_test,]
-  # needs updating so different rules used for different verions:
-  validation_name <<- paste('valid_',unique(dataMode$Test),'_',max(dataMode$Version),'.R',sep="")
-  source(validation_name)
-  dataMode <- as.data.frame(validation_rule(dataMode))
-  return(dataMode)})
-
-observeEvent(input$validate, {
-  validateData()
-
-})
-
-
-   observeEvent(input$saveClick, {
-      saveData()
-     shinyjs::hide("form")
-     shinyjs::hide("saveButton")
-     shinyjs::show("thankyou_msg")
-       })
-
-   observeEvent(input$submit_another, {
-
-     shinyjs::reset("form")
-     shinyjs::show("form")
-     shinyjs::show("saveButton")
-     shinyjs::hide("thankyou_msg")
-
-   })
-
-   observeEvent(input$submit_finish, {
-     counter <- counter_sample()
-     counter <- counter + 1
-     save(counter, file="sampleCounter.Rdata")
-     shinyjs::reset("form")
-     shinyjs::hide("form")
-     shinyjs::hide("thankyou_msg")
-   })
-
-   observeEvent(input$testClick, {
-     saveTest()
-    createValidation()
-      shinyjs::hide("form")
-     shinyjs::hide("saveTest")
-     shinyjs::show("another_test_msg")
-   })
-
-   observeEvent(input$submit_another_Test, {
-
-     shinyjs::reset("form")
-     shinyjs::show("form")
-     shinyjs::show("saveTest")
-     shinyjs::hide("another_test_msg")
-
-   })
-
-
-
+  observeEvent(input$validate, {
+    validate_data()
+  })
 })

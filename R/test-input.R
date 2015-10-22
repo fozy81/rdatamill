@@ -8,7 +8,7 @@ all_input_values <- names(input)
 # html widgets (in all panels/tabs within app). We only want to keep inputs
 # from the form itself:
 
-questions <- grep(pattern ='_test',all_input_values, value=T)
+questions <- grep(pattern ='n_test',all_input_values, value=T)
 
 
 answers <- lapply(questions,function(question){
@@ -76,7 +76,7 @@ steps <- data.frame(do.call("rbind", steps))
 names(steps) <- c("step")
 
 # get answers about units input arguments - - this becomes a separate column in the dataframe
-unit_types <- grep(pattern = '_unit',all_input_values, value=T)
+unit_types <- grep(pattern = 'unit',all_input_values, value=T)
 
 unit_types <- lapply(unit_types,function(unit_type){
   unit_type <- eval(parse(text=paste("input$",unit_type,sep="")))
@@ -103,19 +103,19 @@ names(questions) <- "Questions"
 answers <- data.frame(cbind(answers,questions))
 names(answers) <- c("Answer","questions")
 
-answers$'Test' <- as.character(unique(answers$Answer[answers$questions == 'name_test']))
+answers$'Test' <- as.character(input$name_test)
 
 #remove test name as question
 answers <- answers[!answers$questions == 'name_test',]
 
 # save the checkbox for if test is active for data entry or not:
 
-answers$'Active' <- as.character(answers$Answer[answers$questions == 'check_box_test'])
+answers$'Active' <- as.character(input$check_box_test)
 answers <- answers[!answers$questions == 'check_box_test',]
 
 
-answers$'multiple_results' <- as.character(answers$Answer[answers$questions == 'multiple_results_test'])
-answers <- answers[!answers$questions == 'multiple_results_test',]
+answers$'multiple_results' <- as.character(input$multiple_results_test)
+answers <- answers[!answers$questions == 'multiple_result_test',]
 
 answers <- data.frame(cbind(answers,types))
 answers <- data.frame(cbind(answers,lists))

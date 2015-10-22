@@ -3,9 +3,9 @@
 test_selector <- function(input_name='select_test',message='Select Test:',multiple=F){
 
        selector <- renderUI({
-    # use test_df function to get reactive test list? so if test added
-    # this will be added to drop  down list:
-    test_df <- test_df()
+
+    # use get_test function to test df
+    test_df <- get_test()
     test_df <- test_df$Test
    # if no tests available leave blank:
     if (is.null(test_df))

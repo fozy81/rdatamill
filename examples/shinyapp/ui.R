@@ -27,34 +27,16 @@ shinyUI(navbarPage(
                                                   actionButton("create_new_test","Create New Test"),
                                                   h5('Or...'),
                                                   uiOutput('test_choices_1'),
-                                                  actionButton("edit_test","Load Test")
+                                                  actionButton("edit_test","Edit Test")
 
 
 
                                   ),
-                                  fluidRow(column(6
-                                                  , uiOutput('test_create'),
+                                  fluidRow(column(6,
+                                                  uiOutput('test_create'),
                                                   uiOutput('test_update')
-
-
-
-#                                                   shinyjs::hidden(
-#                                                     div(
-#                                                       id = "thankyou_msg",
-#                                                       h3("Thanks, your response was submitted successfully!"),
-#                                                       actionLink("submit_another", "Submit another response")
-#                                                     )),
-#                                                   shinyjs::hidden(
-#                                                     div(
-#                                                       id = "another_test_msg",
-#                                                       h3("Thanks, your test was submitted successfully!"),
-#                                                       actionLink("submit_another_Test_update", "Submit another test update")
-#                                                     )),
-#                                                   h5(textOutput("counter"))
+                                  ))
                                   )
-                                  )
-                                  )
-
                                   )),
                                    (
    tabPanel('Data entry',shinyjs::useShinyjs(),
@@ -70,6 +52,7 @@ shinyUI(navbarPage(
                       shinyjs::inlineCSS(appCSS),
 
         uiOutput('data_entry'),
+        uiOutput('data_entry2'),
         shinyjs::hidden(
           div(
             id = "thankyou_msg",

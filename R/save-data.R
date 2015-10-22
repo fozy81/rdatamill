@@ -1,9 +1,9 @@
 # saves user entered results
 
-save_data <- function(){
+save_data <- function(analysis=analysis){
 
   if (!file.exists("dataResults.csv")){
-    dataResults <- answers_df()
+    dataResults <- answers_df(analysis)
     dataResults$Result_Number <- row.names(dataResults)
     try(return(write.csv(dataResults, "dataResults.csv",row.names = FALSE)))
   }

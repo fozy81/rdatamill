@@ -8,7 +8,7 @@ count_test <- function(){
   save(counter,file="counter.Rdata")}
 
   if (file.exists("counter.Rdata")){ load(file="counter.Rdata")
-    counter <- counter
+    counter <- counter + 1
 
   save(counter, file="counter.Rdata")}
   return(counter)

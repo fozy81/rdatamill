@@ -1,41 +1,41 @@
 #save test
 
-save_test <- function(){
+save_test <- function(update=NULL){
 
-    if (!file.exists("testForm.csv")){
-      # save the version number of the test if testForm doesn't exists:
+    if (!file.exists("tests.csv")){
+      # save the version number of the test if tests.csv doesn't exists:
       test_questions <- test_input()
-      test_questions$Version <- 1
+      test_questions$version <- 1
 
-       try(return(write.csv( test_questions, "testForm.csv",row.names = FALSE)))
+       try(return(write.csv( test_questions, "tests.csv",row.names = FALSE)))
     }
 
-    # save the version number of the test if testForm already exists:
+    # save the version number of the test if tests.csv already exists:
 
-    if(file.exists("testForm.csv")){
-     test_questions <- test_input()
-   #  test_questions   <-   test_questions
-     savedTestForms <- read.csv("testForm.csv", stringsAsFactors=F)
-     test_questions$Test <- as.character(test_questions$Test)
+    if(file.exists("tests.csv")){
+     test_questions <- test_input(update)
+     saved_tests <- read.csv("tests.csv", stringsAsFactors=F)
+     test_questions$test <- as.character(test_questions$test)
 
-#savedTestForms  <- savedTestForms
-         if (unique(test_questions$Test) %in% savedTestForms$Test){
-         name_test <- as.character(unique( test_questions$Test))
-         version <- max(savedTestForms$Version[savedTestForms$Test == name_test])
-         test_questions$Version  <- version + 1
-         test_questions$Date_created  <- as.character(test_questions$Date_created)
-                 savedTestForms <- rbind(savedTestForms, test_questions)
 
-         return(write.csv(savedTestForms, "testForm.csv", row.names = FALSE))
+         if (unique(test_questions$test) %in% saved_tests$test){
+         name_test <- as.character(unique( test_questions$test))
+         version <- max(saved_tests$version[saved_tests$test == name_test])
+         test_questions$version  <- version + 1
+         test_questions$date_created  <- as.character(test_questions$date_created)
+                 saved_tests <- rbind(saved_tests, test_questions)
+
+         return(write.csv(saved_tests, "tests.csv", row.names = FALSE))
 
     }
-    # save the version number of the test if testForm already exists but test name doesn't:
-       if  (!unique(test_questions$Test) %in% savedTestForms$name_test){
-         test_questions$Version <- 1
-         savedTestForms <- rbind(savedTestForms,test_questions)
+    # save the version number of the test if tests.csv already exists but test name doesn't:
+       if  (!unique(test_questions$test) %in% saved_tests$name_test){
+         test_questions$version <- 1
+         test_questions$date_created  <- as.character(test_questions$date_created)
+         saved_tests <- rbind(saved_tests,test_questions)
 
 
-      return(write.csv(savedTestForms, "testForm.csv", row.names = FALSE))}
+      return(write.csv(saved_tests, "tests.csv", row.names = FALSE))}
 }
 }
 

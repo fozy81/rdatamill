@@ -1,24 +1,31 @@
 # saves user entered results
 
-save_data <- function(analysis=analysis){
+save_data <- function(sample_number=NULL,multiple_test=NULL,selected_tests=NULL){
 
-  if (!file.exists("dataResults.csv")){
-    dataResults <- answers_df(analysis)
-    dataResults$Result_Number <- row.names(dataResults)
-    try(return(write.csv(dataResults, "dataResults.csv",row.names = FALSE)))
+
+  if (!file.exists("results.csv")){
+    results <- result_input(sample_number=sample_number,selected_tests=selected_tests)
+    results$results_number <- row.names(results)
+    try(return(write.csv(results, "results.csv",row.names = FALSE)))
   }
-  if(file.exists("dataResults.csv")){
+  if(file.exists("results.csv")){
 
-    dataResults <- read.csv("dataResults.csv",stringsAsFactors = FALSE)
-    newResults <- answers_df()
-    newResults$Result_Number <- row.names(newResults)
-    dataResults <- rbind(dataResults,newResults)
-    dataResults$Result_Number <- row.names(dataResults)
+    results <- read.csv("results.csv",stringsAsFactors = FALSE)
+if(!is.null(sample_number)){
+  if(is.null(multiple_test)){
+      results <- results[results$sample_number != sample_number,]
+  }
+}
 
-    return(write.csv(dataResults, "dataResults.csv", row.names = FALSE))
+    new_results <- result_input(sample_number=sample_number,selected_tests=selected_tests)
+    new_results$result_number <- row.names(new_results)
+    results <- rbind(results,new_results)
+    results$result_number <- row.names(results)
+
+    return(write.csv(results, "results.csv", row.names = FALSE))
 
   }
 }
-#}
+
 
 

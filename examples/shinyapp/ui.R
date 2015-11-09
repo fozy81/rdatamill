@@ -2,83 +2,87 @@ library(shiny)
 library(shinyjs)
 library(rdatamill)
 
-#
-# Code not used currently:
-#Create function with renderUI and save to R directory. The file name for the
-# survey must start with 'test..' e.g. testCustomerSurvey.R There are  a few
-# examples in the R directory. Currently limited to single paper surveys
-# automatically search for all available tests
+# colour mandatory fields marked with * as red
+appCSS <-".mandatory_star { color: red; }"
 
-# fetch the functions from package which include 'test' prefix:
- getFunctionNames <- ls("package:rdatamill")
- getTestFunctions <- grep(pattern ='^test',getFunctionNames, value=T)
- getTestFunctions <<- getTestFunctions[getTestFunctions != 'testDataFrame']
-
-###################################################
-
- appCSS <-".mandatory_star { color: red; }"
 shinyUI(navbarPage(
     title = 'R DataMill',(tabPanel('Create/Edit Test',
-
                                   shinyjs::useShinyjs(),
                                   # Select update or create new test
                                   fluidRow(column(3,
                                                   p(),
                                                   actionButton("create_new_test","Create New Test"),
                                                   h5('Or...'),
-                                                  uiOutput('test_choices_1'),
+                                                  uiOutput('tests_to_edit'),
                                                   actionButton("edit_test","Edit Test")
-
-
-
                                   ),
                                   fluidRow(column(6,
                                                   uiOutput('test_create'),
-                                                  uiOutput('test_update')
+                                                shinyjs::hidden(
+                                                    div(id = "save_new",
+                                                      actionButton("save_new_test", "Save Test"))),
+                                                  shinyjs::hidden(
+                                                    div(id = "another_test_msg",
+                                                      h3("Thanks, your test were submitted successfully!"),
+                                                      actionLink("submit_another_test", "Submit another test"))),
+                                                  shinyjs::hidden(
+                                                    div(id = "update_test_button",
+                                                        actionButton("update_test_button", "Save Update"))),
+                                                  shinyjs::hidden(
+                                                    div(id = "updated_test_msg",
+                                                        h3("Thanks, your test was updated successfully!")))
                                   ))
                                   )
                                   )),
                                    (
-   tabPanel('Data entry',shinyjs::useShinyjs(),
+   tabPanel('Log Sample/Result entry',shinyjs::useShinyjs(),
             # Select analysis and display 'test...' functions:
                fluidRow(column(3,
-
-
-                               uiOutput('test_choices_2'),
-                               actionButton("log_sample","Log Sample")
-
+                               uiOutput('tests_to_log'),
+                               actionButton("log_sample","Log Sample"),
+                               hr(),
+                               hr(),
+                               hr(),
+                               uiOutput('sample_choice'),
+                               uiOutput('test_choice'),
+                               actionButton("open_sample","Open Sample")
       ),
       fluidRow(column(6,
                       shinyjs::inlineCSS(appCSS),
 
-        uiOutput('data_entry'),
-        uiOutput('data_entry2'),
+        uiOutput('test_details_table'),
+         uiOutput('sample_open'),
+         shinyjs::hidden(actionButton("save_click","Save Results")),
         shinyjs::hidden(
           div(
-            id = "thankyou_msg",
+            id = "thank_you_continue",
             h3("Thanks, your response was submitted successfully!"),
-            actionLink("submit_another", "Submit another response"),p(),
-            actionLink("submit_finish", "Data entry complete - finish sample")
-          )),
+            actionButton("submit_another", "Submit another response")
+                )),
+        shinyjs::hidden(
+          div(
+          id = "finish",
+          p(),
+          actionButton("finish", "Finish")
+        )),
         shinyjs::hidden(
           div(
             id = "mandatory",
-            h3("Complete mandatory fields")
+            h3("Complete mandatory fields *")
           )),
         shinyjs::hidden(
           div(
-            id = "another_test_msg",
-            h3("Thanks, your test was submitted successfully!"),
-            actionLink("submit_another_Test", "Submit another test")
+            id = "thank_you_end",
+            h3("Thanks, your response was submitted successfully!")
           )),
         h5(textOutput("counter"))
         )
         )
    )
     )),
-tabPanel('Data upload',  fluidRow(column(3,
+tabPanel('Import Results',  fluidRow(column(3,
 
-         uiOutput('test_choices_3')),    fluidRow(column(6,
+         uiOutput('tests_to_upload')),    fluidRow(column(6,
                                                           uiOutput('upload_data')
 
                                                           ))
@@ -87,7 +91,7 @@ tabPanel('Data upload',  fluidRow(column(3,
    tabPanel('Validation',shinyjs::useShinyjs(),
                                 fluidRow(column(3,
 
-                                                uiOutput('test_choices_4')),
+                                                uiOutput('tests_to_validate')),
                 fluidRow(column(6,
 
                                 dataTableOutput('result_table'),  actionButton("validate","Validate"),  dataTableOutput('validate_table')

@@ -3,21 +3,20 @@
 
 validate_data <- function(){
 
-if(is.null(input$selected_test_4))
+if(is.null(input$tests_to_validate))
   return()
-if(input$selected_test_4 == 1){
+if(input$tests_to_validate == 1){
 
-  if (!file.exists("dataResults.csv")){
+  if (!file.exists("results.csv")){
 
     try(return())
   }
-  if(file.exists("dataResults.csv")){
+  if(file.exists("results.csv")){
 
-    dataV <- read.csv(file='dataResults.csv')
-    dataV$Mode <- as.character(dataV$Mode)
-    dataV$Mode[dataV$Mode == 'B' & dataV$Test == input$Data_test] <- 'C'
-    dataV <<-  dataV
-    return(write.csv(dataV, "dataResults.csv", row.names = FALSE))
+    results <- read.csv(file='results.csv')
+    results$mode <- as.character(results$mode)
+    results$mode[results$mode == 'B' & results$test == tests_to_validate] <- 'C'
+    return(write.csv(results, "results.csv", row.names = FALSE))
 
   }
 }

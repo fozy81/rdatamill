@@ -1,4 +1,4 @@
-
+# defuncted?
 # for displaying test in UI for data entry
 
 open_test <- function(){
@@ -53,11 +53,13 @@ name_question_1 <- as.character(testForm$Question_order_name[testForm$Question_o
 
   Input_test_1 <-  testForm$types[testForm$Question_order == order]
 
+  ### check if multiple tests can be entered per sample - if not return nothing
 submit_another <- input$submit_another
 ifelse(input$submit_another > 0, first_result_entry <- FALSE,first_result_entry <- TRUE)
 if(input$submit_another > 0){
   if( first_result_entry == testForm$multiple_results){
-           return()
+
+           return(h3('no more results can be entered'))
         }
 
   }
@@ -72,7 +74,8 @@ labelMandatory <- function(label) {
 }
 
  return(list(
-# if(order == "Question_test_1"){ paste("div(id = \"form\",")},
+ #  shinyjs::useShinyjs(),
+ if(order == "Question_test_1"){div(id = "form")},
 if(order == "Question_test_1"){eval(h3(test))},
 
 if(order == "Question_test_1"){eval(h5(paste("Version:",test_max,"",sep="")))},
@@ -99,7 +102,7 @@ output <- div(
 
 return(list(c(output)))
 })
-return(list(open_Test))
+return(open_Test)
 }
 
 

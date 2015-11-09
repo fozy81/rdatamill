@@ -5,14 +5,13 @@ create_validation <- function(){
 
 
 # get some variables required to create validation rules
-  test_questions <- test_input()
-  name_test <- unique(as.character(test_questions$Test))
+  test_questions <- test_input(update=F)
+  name_test <- unique(as.character(test_questions$test))
   name_test_under_score <- gsub(" ","_",name_test)  # add unscore if spaces in test name
-  testForms <- try(read.csv("testForm.csv", stringsAsFactors=F))
-  version <- max(testForms$Version[testForms$Test == name_test])
+  tests <- get_test()
+  version <- max(tests$version[tests$test == name_test])
 file_name <- paste("valid_",name_test_under_score,"_",version,".R",sep="")
 func_name <- paste("validate_",name_test_under_score,"_",version,"",sep="")
-
 
 
 validation_test  <-  paste("# create validation rules:
@@ -52,26 +51,26 @@ validation_test  <-  paste("# create validation rules:
 
 
 ",func_name," <- function(results){
-  testForms <- read.csv(\"testForm.csv\")
-name_test <- unique(as.character(results$Test))
-testForms <- testForms[testForms$Test == name_test,]
-version <- max(testForms$Version)
-testForms <- testForms[testForms$Test == name_test & testForms$Version == version,]
-validate_test <- lapply(testForms$Question,function(question){
-                  testQuestion <- testForms[testForms$Question == question,]
+  tests <- read.csv(\"test.csv\")
+name_test <- unique(as.character(results$test))
+tests <- tests[tests$test == name_test,]
+version <- max(tests$version)
+tests <- tests[tests$test == name_test & tests$version == version,]
+validate_test <- lapply(tests$question,function(question){
+                  testquestion <- tests[tests$question == question,]
 
-                   valid <-  lapply(results$Result_Number[results$Question == testQuestion$Question],function(result_number){
-                      result_list <- results[results$Result_Number == result_number,]
-                               result_list <- cbind(result_list,testQuestion)
+                   valid <-  lapply(results$result_number[results$question == testquestion$question],function(result_number){
+                      result_list <- results[results$result_number == result_number,]
+                               result_list <- cbind(result_list,testquestion)
                         if(result_list$types == 'text box'){
-result_list$Result <- as.character(result_list$Result)
-result_valid_check <- is.character(result_list$Result)
+result_list$result <- as.character(result_list$result)
+result_valid_check <- is.character(result_list$result)
 return(result_valid_check)
                         }
   if(result_list$types == 'numeric'){
-   result_list$Result <- as.numeric(result_list$Result)
-   result_valid_check_1 <- is.numeric(result_list$Result)
-   ifelse(result_list$Result == 11,result_valid_check_2 <- FALSE, result_valid_check_2 <- TRUE)
+   result_list$result <- as.numeric(result_list$result)
+   result_valid_check_1 <- is.numeric(result_list$result)
+   ifelse(result_list$result == 11,result_valid_check_2 <- FALSE, result_valid_check_2 <- TRUE)
    result_valid_check <- rbind(result_valid_check_1, result_valid_check_2)
   return(result_valid_check)
 }

@@ -1,28 +1,33 @@
 
 # for displaying samples in UI for data entry
 
-open_sample <- function(){
+open_sample <- function(sample_number,test=NULL){
 
-inputSample <- input$sample_number
-## inputTest <- input$test
+open_test <- lapply(unique(sample_number), function(sample){
+results <- read.csv(file="results.csv")
+results <- results[results$sample_number == sample,]
 
-open_Test <- lapply(inputSample, function(sample){
-results <- read.csv(file="dataResults.csv")
-results <- results[results$Sample_number == sample,]
+if(!is.null(test)){
+results <- results[results$test %in% test,]}
 
-results <- results[reuslts$Test %in% inputTest,]
-#test_name <- unique(testForm$Test)
-#test_active <-  unique(testForm$Active)
+output <- lapply(unique(results$result_number),function(order){
 
-output <- lapply(unique(results$Result_Number),function(order){
-# test order:
-question <- as.character(results$Question[result$Result_Number == order])
-# test questions
-name_question_1 <- as.character(testForm$Question_order_name[testForm$Question_order == order])
-# test questions:
-#name_question_1 <<- sub(test_question_1,"",name_question_1)
+results <- results[results$result_number == order,]
 
-   List_test_1 <- as.character(testForm$lists[testForm$Question_order == order])
+# question
+label <- as.character(results$question[results$result_number == order])
+# result
+result <- as.character(results$result[results$result_number == order])
+#test name
+test <- as.character(results$test[results$result_number == order])
+
+test_form <- get_test()
+test_form <-test_form[test_form$test == results$test & test_form$version == results$version,]
+test_form <- test_form[test_form$question == results$question,]
+
+question <- as.character(test_form$question_order_name[test_form$question == label])
+
+   List_test_1 <- as.character(test_form$lists)
   if(length(List_test_1) == 0L){
     List_test_1 <- ""
   }
@@ -30,69 +35,82 @@ name_question_1 <- as.character(testForm$Question_order_name[testForm$Question_o
     List_test_1 <- strsplit(List_test_1 , ",")
     names(List_test_1) <-  List_test_1}
 
-   min_test_1 <- as.numeric(testForm$min[testForm$Question_order == order])
+   min_test_1 <- as.numeric(test_form$min)
    if(length(min_test_1) == 0L){
      min_test_1 <- 0
    }
 
-   max_test_1 <- as.numeric(testForm$max[testForm$Question_order == order])
+   max_test_1 <- as.numeric(test_form$max)
    if(length(max_test_1) == 0L){
      max_test_1 <- 0
    }
-   step_test_1 <- as.numeric(testForm$step[testForm$Question_order == order])
+   step_test_1 <- as.numeric(test_form$step)
    if(length(step_test_1) == 0L){
      step_test_1 <- 0
    }
 
-  Input_test_1 <-  testForm$types[testForm$Question_order == order]
+  Input_test_1 <-  test_form$types
 
+  # check to see if entry submitted and only render test if multiple entries allowed:
+  # input$submit_another should be argument?
 submit_another <- input$submit_another
 ifelse(input$submit_another > 0, first_result_entry <- FALSE,first_result_entry <- TRUE)
 if(input$submit_another > 0){
-  if( first_result_entry == testForm$multiple_results){
+  if( first_result_entry == test_form$multiple_results){
            return()
         }
 
   }
 
+if(input$submit_another > 0){
+
+  result <- NULL
+}
+fields_mandatory <- test_form$question[test_form$required == T]
 
 
-labelMandatory <- function(label) {
+labelMandatory <- function(fields_mandatory) {
   tagList(
     label,
     span("*", class = "mandatory_star")
   )
 }
 
+if(length(fields_mandatory) != 0){
+
+  label <- labelMandatory(label)
+}
+
  return(list(
-# if(order == "Question_test_1"){ paste("div(id = \"form\",")},
-if(order == "Question_test_1"){eval(h3(test))},
 
-if(order == "Question_test_1"){eval(h5(paste("Version:",test_max,"",sep="")))},
+if(test_form$question_order == "question_test_1"){eval(h3(test))},
+ #  eval(h3(test)),
+if(order == "question_test_1"){eval(h5(paste("version:",test_max,"",sep="")))},
 
-if(Input_test_1== 'text box'){
-textInput(name_question_1, label = test_question_1)},
-if(Input_test_1== 'list'){
-selectInput(name_question_1 ,label = test_question_1,choices = c(List_test_1))},
+if(test_form$types == 'text box'){
+textInput(question, label = label, value=result)},
+if(test_form$types == 'list'){
+selectInput(question ,label = label,choices = c(List_test_1), selected = result)},
 if(Input_test_1== 'numeric'){
-  sliderInput(name_question_1 ,label = test_question_1, value = 0, min = min_test_1,max = max_test_1, step = step_test_1)}
+  sliderInput(question,label = label, value = result, min = min_test_1,max = max_test_1, step = step_test_1)}
+
 )
 )
 
 
 })
 
-if(testForm$Active == FALSE){
-output <- div(
-  id = "form",
-  h3("No active test available"))
-
-}
+# if(test_form$Active == FALSE){
+# output <- div(
+#   id = "form",
+#   h3("No active test available"))
+#
+# }
 
 
 return(list(c(output)))
 })
-return(list(open_Test))
+return(list(open_test,eval(h5(paste("Sample Number:",unique(sample_number),"",sep="")))))
 }
 
 

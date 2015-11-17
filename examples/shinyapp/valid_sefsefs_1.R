@@ -1,21 +1,5 @@
-
-
-create_validation <- function(){
-
-# get some variables required to create validation rules
-  test_questions <- test_input(update=F)
-  name_test <- unique(as.character(test_questions$test))
-  name_test_under_score <- gsub(" ","_",name_test)  # add unscore if spaces in test name
-  tests <- get_test()
-  version <- max(tests$version[tests$test == name_test])
-file_name <- paste("valid_",name_test_under_score,"_",version,".R",sep="")
-func_name <- paste("validate_",name_test_under_score,"_",version,"",sep="")
-
-
-validation_test  <-  paste("
-
-
-",func_name," <- function(results){
+validation_rule <-
+function(results){
 # create validation rules:
 #### add options for format validation checks or data valiation checks for
 #### result, test or sample.
@@ -55,21 +39,12 @@ return()
 # ifelse(result_list$result => 1000 ,result_valid_check <- FALSE, result_valid_check <- TRUE)
 #
 # if(result_valid_check == TRUE){
-# result_list$valid_msg <- \"PASS - Result is of class numeric\"}
-# result_list$result_msg <- \"PASS\"
+# result_list$valid_msg <- "PASS - Result is of class numeric"}
+# result_list$result_msg <- "PASS"
 # if(result_valid_check == FALSE){
-# result_list$valid_msg <- \"FAIL - Result is not of class numeric\"}
-# result_list$result_msg <- \"FAIL\"
-# return(result_list[,c(\"question\",\"result\",\"types\",\"sample_number\",\"result_number\",\"test\",\"result_msg\",\"valid_msg\")])
+# result_list$valid_msg <- "FAIL - Result is not of class numeric"}
+# result_list$result_msg <- "FAIL"
+# return(result_list[,c("question","result","types","sample_number","result_number","test","result_msg","valid_msg")])
 #}
 #})})
-}",sep="")
-
- validation_rule <-  eval(parse(text=validation_test))
-save(validation_rule,file=paste("",file_name,"Data",sep=""))
-newEnv <- new.env()
-load(paste("",file_name,"Data",sep=""), newEnv)
-dump(c(lsf.str(newEnv)), file=file_name, envir=newEnv)
-wd <- getwd()
-system(paste("rm ",wd,"/",file_name,"Data",sep=""))
 }

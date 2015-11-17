@@ -4,7 +4,7 @@ save_test <- function(update=NULL){
 
     if (!file.exists("tests.csv")){
       # save the version number of the test if tests.csv doesn't exists:
-      test_questions <- test_input()
+      test_questions <- test_input(update)
       test_questions$version <- 1
 
        try(return(write.csv( test_questions, "tests.csv",row.names = FALSE)))

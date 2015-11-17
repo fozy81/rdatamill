@@ -4,8 +4,8 @@ save_data <- function(sample_number=NULL,multiple_test=NULL,selected_tests=NULL)
 
 
   if (!file.exists("results.csv")){
-    results <- result_input(sample_number=sample_number,selected_tests=selected_tests)
-    results$results_number <- row.names(results)
+    results <- result_input(sample_number=NULL,selected_tests=selected_tests)
+    results$result_number <- row.names(results)
     try(return(write.csv(results, "results.csv",row.names = FALSE)))
   }
   if(file.exists("results.csv")){
@@ -21,6 +21,9 @@ if(!is.null(sample_number)){
     new_results$result_number <- row.names(new_results)
     results <- rbind(results,new_results)
     results$result_number <- row.names(results)
+    results$result <- unlist(results$result)
+    results$question <- unlist(results$question)
+  #  results <- data.frame(results)
 
     return(write.csv(results, "results.csv", row.names = FALSE))
 

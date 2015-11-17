@@ -3,6 +3,7 @@
 
 open_sample <- function(sample_number,test=NULL){
 
+sample_number <- sample_number
 open_test <- lapply(unique(sample_number), function(sample){
 results <- read.csv(file="results.csv")
 results <- results[results$sample_number == sample,]
@@ -49,7 +50,7 @@ question <- as.character(test_form$question_order_name[test_form$question == lab
      step_test_1 <- 0
    }
 
-  Input_test_1 <-  test_form$types
+ # Input_test_1 <-  test_form$types
 
   # check to see if entry submitted and only render test if multiple entries allowed:
   # input$submit_another should be argument?
@@ -81,9 +82,17 @@ if(length(fields_mandatory) != 0){
   label <- labelMandatory(label)
 }
 
+if(test_form$active == FALSE){
+  output <- div(
+    id = "form",
+   return(h3("No active test available")))
+
+}
+
+
  return(list(
 
-if(test_form$question_order == "question_test_1"){eval(h3(test))},
+if(test_form$question_order == "question_test_1"){eval(h3(results$test))},
  #  eval(h3(test)),
 if(order == "question_test_1"){eval(h5(paste("version:",test_max,"",sep="")))},
 
@@ -91,22 +100,11 @@ if(test_form$types == 'text box'){
 textInput(question, label = label, value=result)},
 if(test_form$types == 'list'){
 selectInput(question ,label = label,choices = c(List_test_1), selected = result)},
-if(Input_test_1== 'numeric'){
+if(test_form$types == 'numeric'){
   sliderInput(question,label = label, value = result, min = min_test_1,max = max_test_1, step = step_test_1)}
 
-)
-)
-
-
+))
 })
-
-# if(test_form$Active == FALSE){
-# output <- div(
-#   id = "form",
-#   h3("No active test available"))
-#
-# }
-
 
 return(list(c(output)))
 })

@@ -1,15 +1,18 @@
 library(shiny)
 library(rdatamill)
 library(shinyjs)
+library(formattable)
+library(rpivotTable)
+
 
 shinyServer(function(input, output, session) {
 
   # create a differently named selectInput for each page to pick from list of available tests
   # and update when new test created. If no test available leave blank:
-  output$tests_to_edit <- test_selector(input_name='tests_to_edit',message='Select existing test to edit')
-  output$tests_to_log  <- test_selector(input_name='tests_to_log',message='Select tests to add to sample:',multiple=T)
-  output$tests_to_upload  <- test_selector(input_name='tests_to_upload',message='Select test to upload data')
-  output$tests_to_validate  <- test_selector(input_name='tests_to_validate',message='Select test data to validate')
+  output$tests_to_edit <- test_selector(input_name='tests_to_edit',message='Select existing Form to edit')
+  output$tests_to_log  <- test_selector(input_name='tests_to_log',message='Select Forms to add to sample:',multiple=T)
+  output$tests_to_upload  <- test_selector(input_name='tests_to_upload',message='Select Form to upload data')
+  output$tests_to_validate  <- test_selector(input_name='tests_to_validate',message='Select Form data to validate')
 
   # output the 'create test' & save button in the UI if 'create test' button selected
   observeEvent(input$create_new_test, {
@@ -26,10 +29,10 @@ shinyServer(function(input, output, session) {
   observeEvent(input$save_new_test, {
     save_test(update=F)
     # update drop down lists of tests on all pages
-    output$tests_to_edit <- test_selector(input_name='tests_to_edit',message='Select existing test to edit')
-    output$tests_to_log  <- test_selector(input_name='tests_to_log',message='Select tests to add to sample:',multiple=T)
-    output$tests_to_upload  <- test_selector(input_name='tests_to_upload',message='Select test to upload data')
-    output$tests_to_validate  <- test_selector(input_name='tests_to_validate',message='Select test data to validate')
+    output$tests_to_edit <- test_selector(input_name='tests_to_edit',message='Select existing Form to edit')
+    output$tests_to_log  <- test_selector(input_name='tests_to_log',message='Select Forms to add to sample:',multiple=T)
+    output$tests_to_upload  <- test_selector(input_name='tests_to_upload',message='Select Form to upload data')
+    output$tests_to_validate  <- test_selector(input_name='tests_to_validate',message='Select Form data to validate')
     # create wireframe validation function for new test
         create_validation()
   # show thank you message on screen
@@ -48,7 +51,7 @@ observeEvent(input$submit_another_test, {
 observeEvent(input$edit_test, {
 
   output$test_create  <- renderUI({
-   update_test(selected_tests=isolate(input$tests_to_edit))
+   update_test(selected_tests=input$tests_to_edit)
     })
   shinyjs::show("test_create")
   shinyjs::show("update_test_button")
@@ -61,7 +64,7 @@ observeEvent(input$edit_test, {
 observeEvent(input$update_test_button, {
   save_test(update=T)
   # create wireframe validation function fupdated test (remove this in future!)
-  create_validation()
+ # create_validation()
   # show thank you message on screen
  # shinyjs::hide("test_update")
   shinyjs::hide("update_test_button")
@@ -138,7 +141,7 @@ observeEvent(input$update_test_button, {
       }
       if (input$save_click > 0 &  input$submit_another >= 1) {
         selected_tests <- tests$test[tests$test %in% unique(results$test) & tests$version == max_test & tests$multiple_results == T]
-        save_data(sample_number = sample_number,multiple_test=T,selected_tests=selected_tests)
+        save_data(sample_number = sample_number,multiple_test=T,selected_tests=unique(results$test))
         shinyjs::hide("sample_open")
         shinyjs::hide("save_click")
         shinyjs::hide("mandatory")
@@ -157,7 +160,7 @@ observeEvent(input$update_test_button, {
     }
     # if multiple results not allowed display thank you message:
     if (mandatory_filled == T & multiple_test == F ) {
-      save_data(sample_number = sample_number,selected_tests = input$tests_to_log)
+      save_data(sample_number = sample_number,selected_tests = unique(results$test))
       shinyjs::hide("sample_open")
       shinyjs::hide("save_click")
       shinyjs::hide("mandatory")
@@ -170,28 +173,35 @@ observeEvent(input$update_test_button, {
   observeEvent(input$submit_another, {
 
  output$sample_open <- renderUI({
-                 if (input$submit_another == 0)
-                   return()
-   isolate(return(list(open_sample(sample_number),shinyjs::show("sample_open"),
+                 if (input$submit_another == 0){
+                   return()}
+
+ return(list(open_sample(sample_number),shinyjs::show("sample_open"),
                              shinyjs::hide("thank_you_continue"),
                       shinyjs::show("save_click"),shinyjs::hide("mandatory"),shinyjs::show("finish")))
-            )})
+            })
 })
-# to do:
-# reset once finished with logging samples / data entry:
-#   observeEvent(input$submit_finish, {
 
+# reset once finished with logging samples / data entry:
+#    observeEvent(input$submit_finish, {
+#
+#      output$sample_open <- return()
 #   })
+#
+#    observeEvent(input$finish, {
+#
+#     output$sample_open <- return()
+#    })
+
 
 
 # create list of samples previously logged:
    output$sample_choice <-  renderUI({
-     results <- read.csv(file="results.csv")
-     results <- results$sample_number
-    if (length(results) < 1){
-      return()
-    }
-    sample_choice <- selectInput(inputId  = 'selected_sample',label='Select sample',choices = results,selected = NULL)
+     if (file.exists("results.csv")) {
+       results <- read.csv(file = "results.csv", stringsAsFactors = F)
+                           results <- results$sample_number}
+    else {return()}
+       sample_choice <- selectInput(inputId  = 'selected_sample',label='Select sample',choices = results,selected = NULL)
     return(sample_choice)
   })
 
@@ -248,14 +258,27 @@ open_sample(input$selected_sample, test=input$tests_to_update)
     return(unvalidated_data)
   })
 
-  output$validate_table <- renderDataTable({
+  output$validate_table <- renderFormattable({
     date_mode <- read.csv(file = "results.csv")
     date_mode <- date_mode[date_mode$mode == "B" & date_mode$test == input$tests_to_validate,
                      ]
+
+    date_mode <- as.data.frame(format_validation(date_mode))
+  date_mode <-  formattable(date_mode,list(
+           result_msg = formatter("span",
+                                  style = x ~ ifelse(x == "PASS", style(color = "green", font.weight = "bold"), style(color = "red", font.weight = "bold")))
+    ))
+
+    return(date_mode)
+  })
+
+  output$validate_data_table <- renderDataTable({
+    date_mode <- read.csv(file = "results.csv")
+    date_mode <- date_mode[date_mode$mode == "B" & date_mode$test == input$tests_to_validate,
+                           ]
     # needs updating so different rules used for different verions:
-    validation_name <<- paste("valid_", unique(date_mode$test), "_",
-                              max(date_mode$version), ".R", sep = "")
-    source(validation_name)
+        validation_name <- paste("valid_", unique(date_mode$test), "_1.R", sep = "")
+      source(validation_name)
     date_mode <- as.data.frame(validation_rule(date_mode))
     return(date_mode)
   })
@@ -263,4 +286,10 @@ open_sample(input$selected_sample, test=input$tests_to_update)
   observeEvent(input$validate, {
     validate_data()
   })
+
+  output$valid_results_table <- renderRpivotTable({
+    date_mode <- read.csv(file = "results.csv")
+    date_mode <- rpivotTable(date_mode)
+    return(date_mode)
+    })
 })

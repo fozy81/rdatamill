@@ -1,36 +1,39 @@
 library(shiny)
 library(shinyjs)
 library(rdatamill)
+library(formattable)
+library(rpivotTable)
+
 
 # colour mandatory fields marked with * as red
 appCSS <-".mandatory_star { color: red; }"
 
 shinyUI(navbarPage(
-    title = 'R DataMill',(tabPanel('Create/Edit Test',
+    title = 'R DataMill',(tabPanel('Create/Edit Form',
                                   shinyjs::useShinyjs(),
                                   # Select update or create new test
                                   fluidRow(column(3,
                                                   p(),
-                                                  actionButton("create_new_test","Create New Test"),
+                                                  actionButton("create_new_test","Create New Form"),
                                                   h5('Or...'),
                                                   uiOutput('tests_to_edit'),
-                                                  actionButton("edit_test","Edit Test")
+                                                  actionButton("edit_test","Edit Form")
                                   ),
                                   fluidRow(column(6,
                                                   uiOutput('test_create'),
                                                 shinyjs::hidden(
                                                     div(id = "save_new",
-                                                      actionButton("save_new_test", "Save Test"))),
+                                                      actionButton("save_new_test", "Save Form"))),
                                                   shinyjs::hidden(
                                                     div(id = "another_test_msg",
                                                       h3("Thanks, your test were submitted successfully!"),
-                                                      actionLink("submit_another_test", "Submit another test"))),
+                                                      actionLink("submit_another_test", "Submit another Form"))),
                                                   shinyjs::hidden(
                                                     div(id = "update_test_button",
                                                         actionButton("update_test_button", "Save Update"))),
                                                   shinyjs::hidden(
                                                     div(id = "updated_test_msg",
-                                                        h3("Thanks, your test was updated successfully!")))
+                                                        h3("Thanks, your Form was updated successfully!")))
                                   ))
                                   )
                                   )),
@@ -94,7 +97,19 @@ tabPanel('Import Results',  fluidRow(column(3,
                                                 uiOutput('tests_to_validate')),
                 fluidRow(column(6,
 
-                                dataTableOutput('result_table'),  actionButton("validate","Validate"),  dataTableOutput('validate_table')
+                               h4('Results table'), dataTableOutput('result_table'),  actionButton("validate","Validate"),
+                               h4('Results format validation'), formattableOutput('validate_table',width = "100%", height = "300"),  h4('Results data validation'),
+                               dataTableOutput('validate_data_table')
 
-                )))),tabPanel('Analysis'),tabPanel('Data Summary')))
+                )))),tabPanel('Analysis',
+                              fluidRow(column(3
+
+                                            ),
+                                       fluidRow(column(6,
+
+                                                       h4('Results valid table'), rpivotTableOutput('valid_results_table'))))
+
+
+
+                              ),tabPanel('Data Summary')))
 

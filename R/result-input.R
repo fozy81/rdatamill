@@ -2,6 +2,8 @@
 
 result_input <- function(sample_number=NULL,selected_tests=NULL){
 
+  tests <- selected_tests
+
 if(!is.null(selected_tests)){
 
   tests <- selected_tests
@@ -22,7 +24,8 @@ questions <- test_df$question_order_name
 answers <- lapply(questions,function(question){
 
     result_name <- as.character(test_df$question[test_df$question_order_name %in% question])
-  answer <- data.frame(eval(parse(text=paste("input$",question,sep=""))))
+ # answer <- data.frame(eval(parse(text=paste("input$",question,sep=""))))
+    answer <- input[[question]]
   if(length(answer) == 0){
     answer <- data.frame("")}
   answer$question <- unique(result_name)

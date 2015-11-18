@@ -16,7 +16,7 @@ devtools::install_github(fozy81/rdatamill")
 
 This package is aimed a students wanting to record experimental data but using something more formal than a spreadsheet. It allows users to create custom forms via a user interface.
 
-![create_test](./create_test.png?raw=true)
+![create_test](./create_form.png?raw=true)
 
 Results can then be entered into the forms.
 

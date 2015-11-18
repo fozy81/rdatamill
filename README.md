@@ -5,12 +5,7 @@ This package is designed as a framework for users to create web forms, particula
 
 # Install
 
-Currently, the package is only available on GitHub.
-
-```r
-# install.packages("devtools")
-devtools::install_github("fozy81/rdatamill")
-```
+Currently, the package is only available on GitHub. Recommend cloning the repository into Rstudio.
 
 # Introduction
 

@@ -9,7 +9,7 @@ Currently, the package is only available on GitHub.
 
 ```r
 # install.packages("devtools")
-devtools::install_github(fozy81/rdatamill")
+devtools::install_github("fozy81/rdatamill")
 ```
 
 # Introduction

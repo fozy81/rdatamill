@@ -26,4 +26,10 @@
 "Wirds?","update_question_order1","Weird","TRUE","FALSE","text box","",0,0,0,"none",TRUE,"2015-11-18 19:52:42",NA,NA,"1","Wirds?1",8
 "Is this valid?","new_question_order1","Test Valid","TRUE","FALSE","numeric","",100,1,1,"metre",TRUE,"2015-11-18 20:36:08",NA,NA,"1","Is this valid?Test Valid1",1
 "valid?","new_question_order1","test vliad","TRUE","FALSE","text box","",0,0,0,"none",FALSE,"2015-11-18 20:38:01",NA,NA,"1","valid?test vliad1",1
-"viald?","new_question_order1","gssgss","TRUE","FALSE","text box","",0,0,0,"none",FALSE,"2015-11-18 20:41:08","","","1","viald?gssgss1",1
+"viald?","new_question_order1","gssgss","TRUE","FALSE","text box","",0,0,0,"none",FALSE,"2015-11-18 20:41:08",NA,NA,"1","viald?gssgss1",1
+"Petal Length","new_question_order1","Iris Petal","TRUE","FALSE","numeric","",20,0.1,0.1,"mm",FALSE,"2015-11-18 21:12:31",NA,NA,"1","Petal LengthIris Petal1",1
+"Petal length","new_question_order1","Petal Test","TRUE","FALSE","numeric","",200,1,1,"mm",TRUE,"2015-11-18 21:24:10","","","1","Petal lengthPetal Test1",1
+"Petal width","new_question_order2","Petal Test","TRUE","FALSE","numeric","",200,1,1,"mm",TRUE,"2015-11-18 21:24:10","","","2","Petal widthPetal Test2",1
+"Sepal length","new_question_order3","Petal Test","TRUE","FALSE","numeric","",200,1,1,"mm",TRUE,"2015-11-18 21:24:10","","","3","Sepal lengthPetal Test3",1
+"Sepal width","new_question_order4","Petal Test","TRUE","FALSE","numeric","",200,1,1,"mm",TRUE,"2015-11-18 21:24:10","","","4","Sepal widthPetal Test4",1
+"Species","new_question_order5","Petal Test","TRUE","FALSE","list","Iris setosa,Iris virginica,Iris versicolor",0,0,0,"none",TRUE,"2015-11-18 21:24:10","","","5","SpeciesPetal Test5",1

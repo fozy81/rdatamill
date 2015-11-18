@@ -183,15 +183,25 @@ observeEvent(input$update_test_button, {
 })
 
 # reset once finished with logging samples / data entry:
-#    observeEvent(input$submit_finish, {
-#
-#      output$sample_open <- return()
-#   })
-#
-#    observeEvent(input$finish, {
-#
-#     output$sample_open <- return()
-#    })
+   observeEvent(input$submit_finish, {
+     shinyjs::hide("sample_open")
+     shinyjs::hide("save_click")
+     shinyjs::hide("mandatory")
+     shinyjs::hide("thank_you_end")
+     shinyjs::hide("finish")
+     shinyjs::show("tests_to_log")
+
+  })
+
+   observeEvent(input$finish, {
+
+     shinyjs::hide("sample_open")
+     shinyjs::hide("save_click")
+     shinyjs::hide("mandatory")
+     shinyjs::hide("thank_you_end")
+     shinyjs::hide("finish")
+     shinyjs::show("tests_to_log")
+   })
 
 
 
@@ -258,7 +268,7 @@ open_sample(input$selected_sample, test=input$tests_to_update)
     return(unvalidated_data)
   })
 
-  output$validate_table <- renderFormattable({
+  output$validate_table <- renderDataTable({
     date_mode <- read.csv(file = "results.csv")
     date_mode <- date_mode[date_mode$mode == "B" & date_mode$test == input$tests_to_validate,
                      ]

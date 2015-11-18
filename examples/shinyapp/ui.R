@@ -98,7 +98,7 @@ tabPanel('Import Results',  fluidRow(column(3,
                 fluidRow(column(6,
 
                                h4('Results table'), dataTableOutput('result_table'),  actionButton("validate","Validate"),
-                               h4('Results format validation'), formattableOutput('validate_table',width = "100%", height = "300"),  h4('Results data validation'),
+                               h4('Results format validation'), dataTableOutput('validate_table'),  h4('Results data validation'),
                                dataTableOutput('validate_data_table')
 
                 )))),tabPanel('Analysis',

@@ -19,4 +19,11 @@
 "sgseg","new_question_order1","sefsefs","TRUE","FALSE","text box","",0,0,0,"none",FALSE,"2015-11-17 20:45:14",NA,NA,"1","sgsegsefsefs1",1
 "mtili","new_question_order1","mutli","TRUE","TRUE","text box","",0,0,0,"none",FALSE,"2015-11-17 20:54:44",NA,NA,"1","mtilimutli1",1
 "sefs","new_question_order1","sgs?","TRUE","FALSE","text box","",0,0,0,"none",FALSE,"2015-11-17 20:56:27",NA,NA,"1","sefssgs?1",1
-"sefs","new_question_order1","sefsef","TRUE","FALSE","numeric","",100,1,1,"metre",FALSE,"2015-11-17 21:03:46","","","1","sefssefsef1",1
+"sefs","new_question_order1","sefsef","TRUE","FALSE","numeric","",100,1,1,"metre",FALSE,"2015-11-17 21:03:46",NA,NA,"1","sefssefsef1",1
+"Wirds?","update_question_order1","Weird","TRUE","FALSE","text box","",0,0,0,"none",FALSE,"2015-11-18 19:48:25",NA,NA,"1","Wirds?1",5
+"Wirds?","update_question_order1","Weird","TRUE","FALSE","text box","",0,0,0,"none",TRUE,"2015-11-18 19:48:43",NA,NA,"1","Wirds?1",6
+"Wirds?","update_question_order1","Weird","FALSE","FALSE","text box","",0,0,0,"none",TRUE,"2015-11-18 19:52:16",NA,NA,"1","Wirds?1",7
+"Wirds?","update_question_order1","Weird","TRUE","FALSE","text box","",0,0,0,"none",TRUE,"2015-11-18 19:52:42",NA,NA,"1","Wirds?1",8
+"Is this valid?","new_question_order1","Test Valid","TRUE","FALSE","numeric","",100,1,1,"metre",TRUE,"2015-11-18 20:36:08",NA,NA,"1","Is this valid?Test Valid1",1
+"valid?","new_question_order1","test vliad","TRUE","FALSE","text box","",0,0,0,"none",FALSE,"2015-11-18 20:38:01",NA,NA,"1","valid?test vliad1",1
+"viald?","new_question_order1","gssgss","TRUE","FALSE","text box","",0,0,0,"none",FALSE,"2015-11-18 20:41:08","","","1","viald?gssgss1",1

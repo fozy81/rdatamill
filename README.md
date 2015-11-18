@@ -1,7 +1,7 @@
 
 # Rdatamill - Alpha - not recommended for use
 
-This package is designed as a framework for users to create web forms, particularly for collecting experimental data. It uses the shiny package to provide users with an UX interface to create forms. The user can then enter, validate and analyse results. Allowing uses to share their Experiment as a Service (EaaS) to other R users.
+This package is designed as a framework for users to create web forms, particularly for collecting experimental data. It uses the shiny package to provide users with an UX interface to create forms. The user can then enter, validate and analyse results. Creating an project which can be shared as an Experiment as a Service (EaaS) to other R users.
 
 # Install
 

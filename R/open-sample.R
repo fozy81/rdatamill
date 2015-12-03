@@ -3,7 +3,7 @@
 
 open_sample <- function(sample_number,test=NULL){
 
-sample_number <- sample_number
+#sample_number <- sample_number
 open_test <- lapply(unique(sample_number), function(sample){
 results <- read.csv(file="results.csv")
 results <- results[results$sample_number == sample,]

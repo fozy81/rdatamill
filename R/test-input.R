@@ -5,7 +5,7 @@
 # from the form itself:
 
 
-test_input <- function(update=NULL,new=NULL) {
+test_input <- function(update=NULL) {
 
   all_input_values <- names(input)
 
@@ -34,7 +34,7 @@ test_input <- function(update=NULL,new=NULL) {
     #
 
     answers <- data.frame(do.call("cbind", values))
-    names(answers) <- c("question", "types", "lists", "max", "min", "step","unit","required")
+    names(answers) <- c("question", "types", "lists", "min", "max", "step","unit","required")
     answers$question_order <-  grep(pattern="update_question_",all_input_values, value=T)
     # crete some extra column of useful info - may add more or develop further in future
     answers$'date_created' <- Sys.time()

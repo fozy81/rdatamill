@@ -116,7 +116,9 @@ observeEvent(input$update_test_button, {
     tests <- get_test()
     results <- read.csv(file="results.csv")
     results <- results[results$sample_number %in% sample_number,]
+
     max_test <- max(results$version)
+
     fields_mandatory <- tests$question_order_name[tests$required == T & tests$test %in% unique(results$test) & tests$version == max_test]
     mandatory_filled <- vapply(fields_mandatory, function(x) {
       !is.null(input[[x]]) && input[[x]] != ""
@@ -124,8 +126,25 @@ observeEvent(input$update_test_button, {
     , logical(1))
     mandatory_filled <- all(mandatory_filled)
     # check if test(s) can be added mulitple times:
-    tests <- tests[tests$test %in% unique(results$test) & tests$version == max_test,]
-    multiple_test  <-    all(tests$multiple_results)
+    max_tests <- lapply(unique(results$test), function(x) {
+     tests_name <- tests[tests$test %in% x,]
+
+    })
+    max_tests <- data.frame(do.call("rbind", max_tests))
+
+    max_tests <- lapply(max_tests$test, function(x) {
+
+        tests <- tests[tests$test == x,]
+        tests <- tests[tests$version == max(tests$version),]
+        return(tests)
+      })
+    max_tests <- data.frame(do.call("rbind", max_tests))
+
+    if (TRUE %in% max_tests$multiple_results ){
+      multiple_test <- TRUE
+    }
+        else       multiple_test <- FALSE
+    #   multiple_test  <- all(max_tests$multiple_results)
 
     if (mandatory_filled == T &  multiple_test == T | is.null(fields_mandatory)) {
       # enable/disable the submit another button depending whether multiple tests/results can be entered:
@@ -188,8 +207,7 @@ observeEvent(input$update_test_button, {
   observeEvent(input$submit_another, {
 
  output$sample_open <- renderUI({
-              #   if (input$submit_another == 0){
-               #    return()}
+
 
  return(open_sample(sample_number))
             })

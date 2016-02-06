@@ -25,7 +25,7 @@ answers <- lapply(questions,function(question){
 
     result_name <- as.character(test_df$question[test_df$question_order_name %in% question])
  # answer <- data.frame(eval(parse(text=paste("input$",question,sep=""))))
-    answer <- input[[question]]
+    answer <- data.frame(input[[question]])
   if(length(answer) == 0){
     answer <- data.frame("")}
   answer$question <- unique(result_name)

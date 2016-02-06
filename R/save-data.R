@@ -13,7 +13,7 @@ save_data <- function(sample_number=NULL,multiple_test=NULL,selected_tests=NULL)
     results <- read.csv("results.csv",stringsAsFactors = FALSE)
 if(!is.null(sample_number)){
   if(is.null(multiple_test)){
-      results <- results[results$sample_number != sample_number,]
+      results <- results[!results$sample_number %in% sample_number,]
   }
 }
 

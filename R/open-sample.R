@@ -10,6 +10,8 @@ results <- results[results$sample_number == sample,]
 
 if(!is.null(test)){
 results <- results[results$test %in% test,]}
+# split results by unique question(s) only
+results <- results[unique(results$question),]
 
 output <- lapply(unique(results$result_number),function(order){
 
@@ -62,7 +64,8 @@ if(input$submit_another > 0){
         }
 
   }
-
+   if (try(is.null(input$submit_another)))
+      return()
 if(input$submit_another > 0){
 
   result <- NULL

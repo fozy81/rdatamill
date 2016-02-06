@@ -75,7 +75,7 @@ observeEvent(input$update_test_button, {
   # output the surveys/tests in the UI for data entry
   output$test_details_table <- renderTable({
     # if 'Log sample' button not clicked don't allow sample to be saved. display table of tests
-      if (input$log_sample < 1){
+      if (input$log_sample >= 0){
       shinyjs::hide("data_entry")
          test <- lapply(input$tests_to_log, function(x){
          tests <- get_test()
@@ -96,15 +96,18 @@ observeEvent(input$update_test_button, {
 
 #  If 'log sample' clicked, immediately log sample and create sample number by saving empty sample:
   observeEvent(input$log_sample, {
-    if (input$log_sample == 1)
+    if (input$log_sample >= 1)
      #save data:
           save_data(selected_tests=input$tests_to_log)
     # show empty logged sample and save button
     output$sample_open <- renderUI({
       open_sample(sample_number) })
+    shinyjs::show("sample_open")
       shinyjs::show("save_click")
       shinyjs::show("finish")
     shinyjs::hide("tests_to_log")
+    shinyjs::hide("log_sample")
+    shinyjs::hide("test_details_table")
   })
 
 # if 'save' button clicked - run basic validation checks and save results to sample:
@@ -169,18 +172,37 @@ observeEvent(input$update_test_button, {
     }
   })
 
+# if 'finished' selected - allow another sample to be logged:
+  observeEvent(input$finish, {
+
+
+      if (input$finish == 0){
+        return()}
+    shinyjs::show("log_sample")
+    shinyjs::show("tests_to_log")
+    shinyjs::show("test_details_table")
+    })
+
+
 # if multiple test = T, then display only test(s) that is allowed multiple entries:
   observeEvent(input$submit_another, {
 
  output$sample_open <- renderUI({
-                 if (input$submit_another == 0){
-                   return()}
+              #   if (input$submit_another == 0){
+               #    return()}
 
- return(list(open_sample(sample_number),shinyjs::show("sample_open"),
-                             shinyjs::hide("thank_you_continue"),
-                      shinyjs::show("save_click"),shinyjs::hide("mandatory"),shinyjs::show("finish")))
+ return(open_sample(sample_number))
             })
+ shinyjs::reset("sample_open")
+ shinyjs::show("sample_open")
+ shinyjs::hide("thank_you_continue")
+ shinyjs::show("save_click")
+ shinyjs::hide("mandatory")
+ shinyjs::show("finish")
 })
+
+
+
 
 # reset once finished with logging samples / data entry:
    observeEvent(input$submit_finish, {

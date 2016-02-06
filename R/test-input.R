@@ -13,7 +13,7 @@ test_input <- function(update=NULL) {
    # tests <- get_test()
     #test_inputs  <- names(tests)
    # test_inputs  <- paste("update_",test_inputs,sep="")
-    test_inputs <-  c("update_question_order","update_types","update_list","update_min","update_max","update_step","update_unit","update_required")
+    test_inputs <-  c("update_question_order","update_types","update_list","update_max","update_min","update_step","update_unit","update_required")
     values <- lapply(test_inputs,function(test_inputs){
 
       test_names <- grep(pattern=test_inputs,all_input_values, value=T)
@@ -34,7 +34,7 @@ test_input <- function(update=NULL) {
     #
 
     answers <- data.frame(do.call("cbind", values))
-    names(answers) <- c("question", "types", "lists", "min", "max", "step","unit","required")
+    names(answers) <- c("question", "types", "lists","max","min","step","unit","required")
     answers$question_order <-  grep(pattern="update_question_",all_input_values, value=T)
     # crete some extra column of useful info - may add more or develop further in future
     answers$'date_created' <- Sys.time()

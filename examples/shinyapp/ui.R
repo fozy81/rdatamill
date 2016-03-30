@@ -18,6 +18,7 @@ shinyUI(navbarPage(
                                                   h5('Or...'),
                                                   uiOutput('tests_to_edit'),
                                                   actionButton("edit_test","Edit Form")
+
                                   ),
                                   fluidRow(column(6,
                                                   uiOutput('test_create'),
@@ -48,7 +49,7 @@ shinyUI(navbarPage(
                                hr(),
                                uiOutput('sample_choice'),
                                uiOutput('test_choice'),
-                               actionButton("open_sample","Open Sample")
+                               actionButton("open_samples","Open Sample")
       ),
       fluidRow(column(6,
                       shinyjs::inlineCSS(appCSS),

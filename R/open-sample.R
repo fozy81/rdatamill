@@ -2,7 +2,7 @@
 # for displaying samples in UI for data entry
 
 open_sample <- function(sample_number,test=NULL){
-
+check_stop <- "check"
 #sample_number <- sample_number
 open_test <- lapply(unique(sample_number), function(sample){
 results <- read.csv(file="results.csv")
@@ -11,7 +11,7 @@ results <- results[results$sample_number == sample,]
 if(!is.null(test)){
 results <- results[results$test %in% test,]}
 # split results by unique question(s) only
-results <- results[unique(results$question),]
+#results <- results[unique(results$question),]
 
 output <- lapply(unique(results$result_number),function(order){
 

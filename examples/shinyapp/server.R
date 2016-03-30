@@ -77,6 +77,7 @@ observeEvent(input$update_test_button, {
     # if 'Log sample' button not clicked don't allow sample to be saved. display table of tests
       if (input$log_sample >= 0){
       shinyjs::hide("data_entry")
+
          test <- lapply(input$tests_to_log, function(x){
          tests <- get_test()
          tests <- tests[tests$test == x,]
@@ -97,12 +98,17 @@ observeEvent(input$update_test_button, {
 #  If 'log sample' clicked, immediately log sample and create sample number by saving empty sample:
   observeEvent(input$log_sample, {
     if (input$log_sample >= 1)
+
      #save data:
+
           save_data(selected_tests=input$tests_to_log)
+
     # show empty logged sample and save button
     output$sample_open <- renderUI({
       open_sample(sample_number) })
+
     shinyjs::show("sample_open")
+    shinyjs::reset("sample_open")
       shinyjs::show("save_click")
       shinyjs::show("finish")
     shinyjs::hide("tests_to_log")
@@ -211,7 +217,7 @@ observeEvent(input$update_test_button, {
 
  return(open_sample(sample_number))
             })
- shinyjs::reset("sample_open")
+
  shinyjs::show("sample_open")
  shinyjs::hide("thank_you_continue")
  shinyjs::show("save_click")
@@ -224,23 +230,29 @@ observeEvent(input$update_test_button, {
 
 # reset once finished with logging samples / data entry:
    observeEvent(input$submit_finish, {
+     shinyjs::reset("sample_open")
+     shinyjs::reset("tests_to_log")
      shinyjs::hide("sample_open")
      shinyjs::hide("save_click")
      shinyjs::hide("mandatory")
      shinyjs::hide("thank_you_end")
+     shinyjs::hide("thank_you_continue")
      shinyjs::hide("finish")
      shinyjs::show("tests_to_log")
 
   })
 
    observeEvent(input$finish, {
-
+     shinyjs::reset("sample_open")
      shinyjs::hide("sample_open")
+     shinyjs::reset("tests_to_log")
      shinyjs::hide("save_click")
      shinyjs::hide("mandatory")
      shinyjs::hide("thank_you_end")
+     shinyjs::hide("thank_you_continue")
      shinyjs::hide("finish")
      shinyjs::show("tests_to_log")
+     shinyjs::hide("another_test_msg")
    })
 
 
@@ -281,13 +293,14 @@ observeEvent(input$update_test_button, {
      })
    })
 
-   observeEvent(input$open_sample, {
+   observeEvent(input$open_samples, {
      shinyjs::hide("save_click")
      shinyjs::hide("thank_you_continue")
  output$sample_open <- renderUI({
 open_sample(input$selected_sample, test=input$tests_to_update)
          })
   shinyjs::show("save_click")
+  shinyjs::show("sample_open")
   shinyjs::show("tests_to_log")
  })
 

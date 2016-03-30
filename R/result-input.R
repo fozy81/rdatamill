@@ -28,6 +28,8 @@ answers <- lapply(questions,function(question){
     answer <- data.frame(input[[question]])
   if(length(answer) == 0){
     answer <- data.frame("")}
+    if(is.null(sample_number)){
+      answer <- data.frame("")}
   answer$question <- unique(result_name)
 
       return(answer)
@@ -36,6 +38,8 @@ answers <- data.frame(do.call("rbind", answers))
 if(length(answers) == 0){
      answers <- data.frame("","")
 }
+if(is.null(sample_number)){
+  answer <- data.frame("","")}
 
  names(answers) <- c('result','question')
 
